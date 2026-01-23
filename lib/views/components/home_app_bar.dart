@@ -84,13 +84,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     onPressed: () {},
                     size: 20,
                   ),
-                  const SizedBox(width: 10),
-                  const CircleAvatar(
-                    backgroundColor: Colors.deepPurpleAccent,
-                    radius: 13,
-                    child: Icon(Icons.person),
-                  ),
-                  IconButton(
+                  CustomIconButton(
                     onPressed: () {
                       ref
                           .read(themeProvider.notifier)
@@ -99,8 +93,15 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
                           : ThemeMode.dark;
                     },
                     icon: ref.watch(themeProvider) == ThemeMode.dark
-                        ? const Icon(Icons.dark_mode)
-                        : const Icon(Icons.light_mode),
+                        ? Icons.dark_mode
+                        : Icons.light_mode,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  const CircleAvatar(
+                    backgroundColor: Colors.deepPurpleAccent,
+                    radius: 13,
+                    child: Icon(Icons.person),
                   ),
                 ],
               ),

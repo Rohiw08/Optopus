@@ -20,18 +20,26 @@ class _ColorPickerCardState extends State<ColorPickerCard> {
   late Color currentColor;
   late Color pickerColor;
 
+  // Helper to parse color from various formats
+  Color _parseColor(dynamic data) {
+    if (data is Color) return data;
+    if (data is int) return Color(data);
+    return Colors.pink;
+  }
+
   @override
   void initState() {
     super.initState();
-    currentColor = widget.node.data['color'] ?? Colors.pink;
+    currentColor = _parseColor(widget.node.data['color']);
     pickerColor = currentColor;
   }
 
   @override
   void didUpdateWidget(covariant ColorPickerCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final newColor = widget.node.data['color'];
-    if (newColor != null && newColor != currentColor) {
+    final newColorData = widget.node.data['color'];
+    final newColor = _parseColor(newColorData);
+    if (newColor != currentColor) {
       setState(() {
         currentColor = newColor;
       });
@@ -64,7 +72,8 @@ class _ColorPickerCardState extends State<ColorPickerCard> {
               });
 
               final newNodeData = Map<String, dynamic>.from(widget.node.data);
-              newNodeData['color'] = currentColor;
+              // Store as int for JSON compatibility
+              newNodeData['color'] = currentColor.value;
               final updatedNode = widget.node.copyWith(data: newNodeData);
               widget.controller.nodes.updateNode(updatedNode);
 

@@ -6,29 +6,35 @@ import 'package:optopus/widgets/nodes/color_picker_node.dart';
 import 'package:optopus/widgets/nodes/input_node.dart';
 
 class NodeEditorView extends StatefulWidget {
-  const NodeEditorView({super.key});
+  final FlowCanvasController controller;
+
+  const NodeEditorView({super.key, required this.controller});
 
   @override
   State<NodeEditorView> createState() => _NodeEditorViewState();
 }
 
 class _NodeEditorViewState extends State<NodeEditorView> {
-  final controller = FlowCanvasController();
+  // Controller is now accessed via widget.controller
+
+  late final NodeRegistry nodeRegistry;
+  late final EdgeRegistry edgeRegistry;
 
   @override
   void initState() {
     super.initState();
+    nodeRegistry = NodeRegistry()
+      ..register('colorPicker', (node) {
+        return ColorPickerCard(node: node, controller: widget.controller);
+      })
+      ..register('InputNode', (node) {
+        return InputNode(node: node, controller: widget.controller);
+      });
+    edgeRegistry = EdgeRegistry();
   }
 
-  late final nodeRegistry = NodeRegistry()
-    ..register('colorPicker', (node) {
-      return ColorPickerCard(node: node, controller: controller);
-    })
-    ..register('InputNode', (node) {
-      return InputNode(node: node, controller: controller);
-    });
-
-  final edgeRegistry = EdgeRegistry();
+  // removed initialNodes declaration to be cleaner, or keep it.
+  // Wait, initialNodes uses const constructors so it is fine.
 
   final List<FlowNode> initialNodes = [
     FlowNode.create(
@@ -204,7 +210,7 @@ class _NodeEditorViewState extends State<NodeEditorView> {
         // ),
         Expanded(
           child: FlowCanvas(
-            controller: controller,
+            controller: widget.controller,
             nodeRegistry: nodeRegistry,
             edgeRegistry: edgeRegistry,
             initialNodes: initialNodes,
@@ -224,9 +230,15 @@ class _NodeEditorViewState extends State<NodeEditorView> {
                 elevateNodesOnSelected: true,
               ),
             ),
-            theme: FlowCanvasTheme.system(
-              context,
-            ).copyWith(connection: FlowConnectionStyle.light().copyWith()),
+            theme: FlowCanvasTheme.system(context).copyWith(
+              connection: FlowConnectionStyle.light().copyWith(
+                endMarkerStyle: FlowEdgeMarkerStyle.colored(
+                  markerType: EdgeMarkerType.circle,
+                  size: const Size(20, 20),
+                  color: Color(0xFF64B5F6),
+                ),
+              ),
+            ),
             overlays: const [
               FlowBackground(),
               FlowMiniMap(),

@@ -5,33 +5,42 @@ import 'package:optopus/core/common/sidebar_content_bar.dart';
 import 'package:optopus/core/utils/button_text.dart';
 
 class HomeFileExplorer extends StatelessWidget {
-  const HomeFileExplorer({super.key});
+  final double width;
+  const HomeFileExplorer({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
     return SideBar(
-      minWidth: 270,
-      width: 270,
+      minWidth: 200,
+      width: width,
       height: double.infinity,
+      border: Border(
+        right: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+      ),
       child: Column(
         children: [
           const SizedBox(height: 10),
           Row(
             children: [
               const SizedBox(width: 5),
-              const CustomSearchBar(
-                height: 25,
-                width: 150,
-                hintText: "Search file",
+              const Expanded(
+                flex: 2,
+                child: CustomSearchBar(
+                  height: 25,
+                  width: double.infinity,
+                  hintText: "Search",
+                ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 5),
               CreateButton(
                 icon: Icons.add,
-                text: "Create",
+                text: width > 220 ? "Create" : "",
                 height: 25,
-                width: 100,
+                // If width is small (<220), force small width (30), else let it expand or be fixed (80)
+                width: width > 220 ? 100 : 30,
                 onPressed: () {},
               ),
+              const SizedBox(width: 5),
             ],
           ),
           const SizedBox(width: 20),

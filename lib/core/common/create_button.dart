@@ -19,33 +19,47 @@ class CreateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = ButtonStyle(
+      backgroundColor: WidgetStateProperty.all(
+        Theme.of(context).colorScheme.surface,
+      ),
+      shape: WidgetStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(3.0),
+          side: BorderSide(color: Theme.of(context).dividerColor, width: 0.2),
+        ),
+      ),
+    );
+
     return SizedBox(
       height: height,
       width: width,
-      child: TextButton.icon(
-        onPressed: onPressed, // Use the provided callback function
-        icon: Icon(
-          icon,
-          weight: 0.3,
-          size: 20,
-          color: Theme.of(context).iconTheme.color,
-        ),
-        label: CustomButtonText(text),
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(
-            Theme.of(context).colorScheme.surface,
-          ),
-          shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(3.0),
-              side: BorderSide(
-                color: Theme.of(context).dividerColor,
-                width: 0.2, // Set border width
+      child: text.isEmpty
+          ? TextButton(
+              onPressed: onPressed,
+              style: style.copyWith(
+                padding: WidgetStateProperty.all(EdgeInsets.zero),
+                minimumSize: WidgetStateProperty.all(Size.zero),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
+              child: Icon(
+                icon,
+                weight: 0.3,
+                size: 20,
+                color: Theme.of(context).iconTheme.color,
+              ),
+            )
+          : TextButton.icon(
+              onPressed: onPressed,
+              icon: Icon(
+                icon,
+                weight: 0.3,
+                size: 20,
+                color: Theme.of(context).iconTheme.color,
+              ),
+              label: CustomButtonText(text),
+              style: style,
             ),
-          ),
-        ),
-      ),
     );
   }
 }

@@ -6,6 +6,7 @@ class SideBar extends StatelessWidget {
   final double width;
   final double height;
   final Widget child;
+  final BoxBorder? border;
 
   const SideBar({
     super.key,
@@ -13,6 +14,7 @@ class SideBar extends StatelessWidget {
     required this.width,
     required this.height,
     required this.child,
+    this.border,
   });
 
   @override
@@ -24,11 +26,13 @@ class SideBar extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border.all(
-          style: BorderStyle.solid,
-          width: 0.1,
-          color: Theme.of(context).dividerColor,
-        ),
+        border:
+            border ??
+            Border.all(
+              style: BorderStyle.solid,
+              width: 0.1,
+              color: Theme.of(context).dividerColor,
+            ),
       ),
       child: child,
     );

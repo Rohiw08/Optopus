@@ -7,10 +7,13 @@ class HomeNavigationRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SideBar(
+    return SideBar(
       minWidth: 45,
-      width: 80,
+      width: 60,
       height: double.infinity,
+      border: Border(
+        right: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
