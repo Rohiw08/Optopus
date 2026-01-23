@@ -1,11 +1,7 @@
 import 'package:flow_canvas/src/application/controllers/selection_controller.dart';
-import 'package:flow_canvas/src/application/events/edge_change_event.dart';
-import 'package:flow_canvas/src/application/events/edges_flow_state_chnage_event.dart';
 import 'package:flow_canvas/src/application/flow_canvas_internal_controller.dart';
 import 'package:flow_canvas/src/application/services/edge_geometry_service.dart';
 import 'package:flow_canvas/src/application/services/edge_service.dart';
-import 'package:flow_canvas/src/application/streams/edge_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/edges_flow_state_change_stream.dart';
 import 'package:flow_canvas/src/domain/models/edge.dart';
 import 'package:flutter/gestures.dart';
 
@@ -16,8 +12,6 @@ class EdgesController {
   final FlowCanvasInternalController _controller;
   final EdgeService _edgeService;
   final EdgeGeometryService _edgeGeometryService;
-  final EdgeInteractionStreams _edgeStreams;
-  final EdgesStateStreams _edgesStateStreams;
   final SelectionController _selectionController;
 
   // This will be needed for deselectAll and selectEdge
@@ -27,14 +21,10 @@ class EdgesController {
     required FlowCanvasInternalController controller,
     required EdgeService edgeService,
     required EdgeGeometryService edgeGeometryService,
-    required EdgeInteractionStreams edgeStreams,
-    required EdgesStateStreams edgesStateStreams,
     required SelectionController selectionController,
   })  : _controller = controller,
         _edgeService = edgeService,
         _edgeGeometryService = edgeGeometryService,
-        _edgeStreams = edgeStreams,
-        _edgesStateStreams = edgesStateStreams,
         _selectionController = selectionController;
 
   List<String> getEdgesFromNodes(Iterable<String> nodeIds) {
@@ -44,14 +34,6 @@ class EdgesController {
   void addEdge(FlowEdge edge) {
     _controller.mutate((s) => _edgeService.addEdge(s, edge));
     _edgeGeometryService.updateEdge(_controller.currentState, edge.id);
-
-    final event = EdgeLifecycleEvent(
-      type: EdgeLifecycleType.add,
-      state: _controller.currentState,
-      edgeId: edge.id,
-      data: edge,
-    );
-    _edgesStateStreams.emitEvent(event);
   }
 
   void addEdges(List<FlowEdge> edges) {
@@ -59,16 +41,6 @@ class EdgesController {
     for (final edge in edges) {
       _edgeGeometryService.updateEdge(_controller.currentState, edge.id);
     }
-
-    final events = edges
-        .map((e) => EdgeLifecycleEvent(
-              type: EdgeLifecycleType.add,
-              state: _controller.currentState,
-              edgeId: e.id,
-              data: e,
-            ))
-        .toList();
-    _edgesStateStreams.emitBulk(events);
   }
 
   void removeSelectedEdges() {
@@ -79,15 +51,6 @@ class EdgesController {
     _controller
         .mutate((s) => _edgeService.removeEdges(s, edgesToRemove.toList()));
     _edgeGeometryService.removeEdges(edgesToRemove);
-
-    final events = edgesToRemove
-        .map((id) => EdgeLifecycleEvent(
-              type: EdgeLifecycleType.remove,
-              state: _controller.currentState,
-              edgeId: id,
-            ))
-        .toList();
-    _edgesStateStreams.emitBulk(events);
   }
 
   void updateEdge(String edgeId, EdgeDataUpdater updater) {
@@ -96,15 +59,6 @@ class EdgesController {
 
     _controller.mutate((s) => _edgeService.updateEdgeData(s, edgeId, updater));
     _edgeGeometryService.updateEdge(_controller.currentState, edgeId);
-
-    final newEdge = _controller.currentState.edges[edgeId];
-    final event = EdgeLifecycleEvent(
-      type: EdgeLifecycleType.update,
-      state: _controller.currentState,
-      edgeId: edgeId,
-      data: {'old': oldEdge.data, 'new': newEdge?.data},
-    );
-    _edgesStateStreams.emitEvent(event);
   }
 
   void reconnectEdge({
@@ -119,13 +73,6 @@ class EdgesController {
         newSourceHandleId: newSourceHandleId,
         newTargetNodeId: newTargetNodeId,
         newTargetHandleId: newTargetHandleId));
-
-    final event = EdgeLifecycleEvent(
-      type: EdgeLifecycleType.reconnect,
-      state: _controller.currentState,
-      edgeId: edgeId,
-    );
-    _edgesStateStreams.emitEvent(event);
   }
 
   void onEdgePointerHover(PointerEvent event, Offset localPosition) {
@@ -134,15 +81,10 @@ class EdgesController {
         localPosition, state, state.viewport.zoom);
 
     final currentHoveredId = state.hoveredEdgeId;
-    if (hit != currentHoveredId) {
-      _controller.updateStateOnly(state.copyWith(hoveredEdgeId: hit ?? ""));
+    final hitId = hit ?? "";
 
-      _edgeStreams.emitEvent(
-          EdgeMouseLeaveEvent(edgeId: currentHoveredId, details: event));
-    }
-
-    if (hit != null) {
-      _edgeStreams.emitEvent(EdgeMouseMoveEvent(edgeId: hit, details: event));
+    if (hitId != currentHoveredId) {
+      _controller.updateStateOnly(state.copyWith(hoveredEdgeId: hitId));
     }
   }
 
@@ -158,28 +100,14 @@ class EdgesController {
         // Delegate to SelectionController
         _selectionController.selectEdge(hit, addToSelection: false);
       }
-
-      _edgeStreams.emitEvent(EdgeClickEvent(edgeId: hit, details: details));
     } else {
       // If no edge was hit, treat it as a pane tap
       _selectionController.deselectAll();
     }
   }
 
-  void onEdgeDoubleTap() {
-    final lastDownEdgeId = _controller.currentState.lastClickedEdgeId;
-
-    _edgeStreams.emitEvent(EdgeDoubleClickEvent(edgeId: lastDownEdgeId));
-  }
+  void onEdgeDoubleTap() {}
 
   void onEdgeLongPressStart(
-      LongPressStartDetails details, Offset localPosition) {
-    final state = _controller.currentState;
-    final hit = _edgeGeometryService.hitTestEdgeAt(
-        localPosition, state, state.viewport.zoom);
-    if (hit != null) {
-      _edgeStreams
-          .emitEvent(EdgeContextMenuEvent(edgeId: hit, details: details));
-    }
-  }
+      LongPressStartDetails details, Offset localPosition) {}
 }

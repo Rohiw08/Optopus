@@ -1,7 +1,9 @@
 import 'dart:ui';
+import 'package:flow_canvas/src/shared/json_converters.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'viewport_state.freezed.dart';
+part 'viewport_state.g.dart';
 
 /// Defines the current camera transform of the canvas.
 ///
@@ -20,13 +22,16 @@ abstract class FlowViewport with _$FlowViewport {
   const FlowViewport._();
   const factory FlowViewport({
     /// Canvas translation offset in Cartesian space.
-    @Default(Offset.zero) Offset offset,
+    @Default(Offset.zero) @OffsetConverter() Offset offset,
 
     /// Current zoom level (1.0 = 100%) — affects all scale-related rendering.
     ///
     /// Lower values zoom out, higher zoom in.
     @Default(1.0) double zoom,
   }) = _FlowViewport;
+
+  factory FlowViewport.fromJson(Map<String, dynamic> json) =>
+      _$FlowViewportFromJson(json);
 
   /// Returns a convenient default untransformed viewport.
   static const FlowViewport initial = FlowViewport();

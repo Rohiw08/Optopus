@@ -178,11 +178,12 @@ class SelectionService {
   }) {
     if (state.selectionRect == Rect.zero) return state;
     final newSelectionRect = Rect.fromPoints(origin, position);
-    final newSelectedNodes = state.nodeIndex.queryNodesInRect(newSelectionRect);
+    final newSelectedNodes =
+        state.nodeIndex!.queryNodesInRect(newSelectionRect);
 
     final edgesInArea = <String>{};
     for (final nodeId in newSelectedNodes) {
-      final connectedEdges = state.edgeIndex.getEdgesForNode(nodeId);
+      final connectedEdges = state.edgeIndex!.getEdgesForNode(nodeId);
       for (final edgeId in connectedEdges) {
         final edge = state.edges[edgeId];
         if (edge != null &&

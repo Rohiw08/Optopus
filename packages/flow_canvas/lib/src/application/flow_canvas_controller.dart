@@ -14,14 +14,6 @@ import 'package:flow_canvas/src/application/controllers/keyboard_controller.dart
 import 'package:flow_canvas/src/application/controllers/nodes_controller.dart';
 import 'package:flow_canvas/src/application/controllers/selection_controller.dart';
 import 'package:flow_canvas/src/application/controllers/z_index_controller.dart';
-import 'package:flow_canvas/src/application/streams/connection_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/edge_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/edges_flow_state_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/node_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/nodes_flow_state_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/pane_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/selection_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/viewport_change_stream.dart';
 
 /// A public-facing controller (facade) for interacting with a FlowCanvas widget.
 ///
@@ -177,55 +169,5 @@ class FlowCanvasController {
   KeyboardController get keyboard {
     _assertAttached();
     return _internalController!.keyboard;
-  }
-
-  // --- Delegated Streams ---
-
-  /// Streams for user-driven node interactions (click, drag, hover).
-  NodeInteractionStreams get nodeStreams {
-    _assertAttached();
-    return _internalController!.nodeStreams;
-  }
-
-  /// Streams for node lifecycle events (add, remove, update).
-  NodesStateStreams get nodesStateStreams {
-    _assertAttached();
-    return _internalController!.nodesStateStreams;
-  }
-
-  /// Streams for user-driven edge interactions (click, hover).
-  EdgeInteractionStreams get edgeStreams {
-    _assertAttached();
-    return _internalController!.edgeStreams;
-  }
-
-  /// Streams for edge lifecycle events (add, remove, update).
-  EdgesStateStreams get edgesStateStream {
-    _assertAttached();
-    return _internalController!.edgesStateStream;
-  }
-
-  /// Streams for connection drag events (start, connect, end).
-  ConnectionStreams get connectionStreams {
-    _assertAttached();
-    return _internalController!.connectionStreams;
-  }
-
-  /// Streams for pane (canvas background) interactions.
-  PaneStreams get paneStreams {
-    _assertAttached();
-    return _internalController!.paneStreams;
-  }
-
-  /// Streams for selection change events.
-  SelectionStreams get selectionStreams {
-    _assertAttached();
-    return _internalController!.selectionStreams;
-  }
-
-  /// Streams for viewport change events (pan, zoom, resize).
-  ViewportStreams get viewportStreams {
-    _assertAttached();
-    return _internalController!.viewportStreams;
   }
 }

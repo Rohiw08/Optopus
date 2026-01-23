@@ -1,8 +1,6 @@
 import 'dart:ui';
-import 'package:flow_canvas/src/application/events/viewport_change_event.dart';
 import 'package:flow_canvas/src/application/flow_canvas_internal_controller.dart';
 import 'package:flow_canvas/src/application/services/viewport_service.dart';
-import 'package:flow_canvas/src/application/streams/viewport_change_stream.dart';
 import 'package:flow_canvas/src/domain/state/viewport_state.dart';
 import 'package:flow_canvas/src/presentation/options/components/fitview_options.dart';
 import 'package:flow_canvas/src/presentation/options/components/viewport_options.dart';
@@ -12,40 +10,25 @@ class ViewportController {
   final FlowCanvasInternalController _controller;
   final ViewportService _viewportService;
   final CanvasCoordinateConverter _coordinateConverter;
-  final ViewportStreams _viewportStreams;
 
   ViewportController({
     required FlowCanvasInternalController controller,
     required ViewportService viewportService,
     required CanvasCoordinateConverter coordinateConverter,
-    required ViewportStreams viewportStreams,
   })  : _controller = controller,
         _viewportService = viewportService,
-        _coordinateConverter = coordinateConverter,
-        _viewportStreams = viewportStreams;
+        _coordinateConverter = coordinateConverter;
 
   void setViewportSize(Size size) {
     final currentState = _controller.currentState;
     if (currentState.viewportSize != size) {
       _controller.updateStateOnly(currentState.copyWith(viewportSize: size));
-      final event = ViewportEvent(
-        type: ViewportEventType.resize,
-        viewport: currentState.viewport,
-        viewportSize: size,
-      );
-      _viewportStreams.emitEvent(event);
     }
   }
 
   void panBy(Offset delta) {
     final newState = _viewportService.pan(_controller.currentState, delta);
     _controller.updateStateOnly(newState);
-    final event = ViewportEvent(
-      type: ViewportEventType.transform,
-      viewport: newState.viewport,
-      viewportSize: newState.viewportSize,
-    );
-    _viewportStreams.emitEvent(event);
   }
 
   void toggleLock() {
@@ -68,12 +51,6 @@ class ViewportController {
       maxZoom: maxZoom,
     );
     _controller.updateStateOnly(newState);
-    final event = ViewportEvent(
-      type: ViewportEventType.transform,
-      viewport: newState.viewport,
-      viewportSize: newState.viewportSize,
-    );
-    _viewportStreams.emitEvent(event);
   }
 
   void fitView(
@@ -84,12 +61,6 @@ class ViewportController {
         viewportOptions: viewportOptions,
         fitViewOptions: fitviewOptions);
     _controller.updateStateOnly(newState);
-    final event = ViewportEvent(
-      type: ViewportEventType.transform,
-      viewport: newState.viewport,
-      viewportSize: newState.viewportSize,
-    );
-    _viewportStreams.emitEvent(event);
   }
 
   void centerOnPosition(Offset canvasPosition) {
@@ -99,24 +70,12 @@ class ViewportController {
     );
 
     _controller.updateStateOnly(newState);
-    final event = ViewportEvent(
-      type: ViewportEventType.transform,
-      viewport: newState.viewport,
-      viewportSize: newState.viewportSize,
-    );
-    _viewportStreams.emitEvent(event);
   }
 
   void resetView() {
     final newState =
         _controller.currentState.copyWith(viewport: const FlowViewport());
     _controller.updateStateOnly(newState);
-    final event = ViewportEvent(
-      type: ViewportEventType.transform,
-      viewport: newState.viewport,
-      viewportSize: newState.viewportSize,
-    );
-    _viewportStreams.emitEvent(event);
   }
 
   Offset screenToCanvas(Offset screenPosition) =>

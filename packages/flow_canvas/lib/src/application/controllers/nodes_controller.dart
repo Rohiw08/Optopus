@@ -1,12 +1,8 @@
 import 'dart:async';
 import 'package:flow_canvas/src/application/controllers/selection_controller.dart';
-import 'package:flow_canvas/src/application/events/node_change_event.dart';
-import 'package:flow_canvas/src/application/events/nodes_flow_state_change_event.dart';
 import 'package:flow_canvas/src/application/flow_canvas_internal_controller.dart';
 import 'package:flow_canvas/src/application/services/edge_service.dart';
 import 'package:flow_canvas/src/application/services/node_service.dart';
-import 'package:flow_canvas/src/application/streams/node_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/nodes_flow_state_change_stream.dart';
 import 'package:flow_canvas/src/domain/flow_canvas_state.dart';
 import 'package:flow_canvas/src/domain/models/node.dart';
 import 'package:flow_canvas/src/domain/state/node_state.dart';
@@ -19,34 +15,28 @@ class NodesController {
     required FlowCanvasInternalController controller,
     required NodeService nodeService,
     required EdgeService edgeService,
-    required NodeInteractionStreams nodeStreams,
-    required NodesStateStreams nodesStateStreams,
     required SelectionController selectionController,
   })  : _controller = controller,
         _nodeService = nodeService,
         _edgeService = edgeService,
-        _nodeStreams = nodeStreams,
-        _nodesStateStreams = nodesStateStreams,
         _selectionController = selectionController;
 
   final FlowCanvasInternalController _controller;
   final NodeService _nodeService;
   final EdgeService _edgeService;
-  final NodeInteractionStreams _nodeStreams;
-  final NodesStateStreams _nodesStateStreams;
   final SelectionController _selectionController;
 
   Map<String, Offset>? _dragStartPositions;
   Set<String> _nodesBeingDragged = {};
 
-  FlowNode? getNode(nodeId) {
+  FlowNode? getNode(String nodeId) {
     return _nodeService.getNode(
       _controller.currentState,
       nodeId,
     );
   }
 
-  NodeRuntimeState? getNodeRuntimeState(nodeId) {
+  NodeRuntimeState? getNodeRuntimeState(String nodeId) {
     return _nodeService.getNodeRuntimeState(
       _controller.currentState,
       nodeId,
@@ -58,13 +48,6 @@ class NodesController {
       throw ArgumentError('Node with id ${node.id} already exists');
     }
     _controller.mutate((s) => _nodeService.addNode(s, node));
-    final event = NodeLifecycleEvent(
-      type: NodeLifecycleType.add,
-      state: _controller.currentState,
-      nodeId: node.id,
-      data: node,
-    );
-    _nodesStateStreams.emitEvent(event);
   }
 
   void addNodes(List<FlowNode> nodes) {
@@ -74,15 +57,6 @@ class NodesController {
       }
     }
     _controller.mutate((s) => _nodeService.addNodes(s, nodes));
-    final events = nodes
-        .map((n) => NodeLifecycleEvent(
-              type: NodeLifecycleType.add,
-              state: _controller.currentState,
-              nodeId: n.id,
-              data: n,
-            ))
-        .toList();
-    _nodesStateStreams.emitBulk(events);
   }
 
   void removeNode(String nodeId) {
@@ -109,16 +83,6 @@ class NodesController {
     final newState =
         _nodeService.removeNodes(stateAfterEdges, removedNodeIds.toList());
     _controller.mutate((_) => newState);
-
-    final nodeEvents = removedNodeIds
-        .map((id) => NodeLifecycleEvent(
-              type: NodeLifecycleType.remove,
-              state: _controller.currentState,
-              nodeId: id,
-            ))
-        .toList();
-
-    _nodesStateStreams.emitBulk(nodeEvents);
   }
 
   void updateNode(FlowNode node) {
@@ -126,19 +90,6 @@ class NodesController {
     if (oldNode == null || oldNode == node) return;
 
     _controller.mutate((s) => _nodeService.updateNode(s, node));
-
-    final newNode = _nodeService.getNode(
-      _controller.currentState,
-      node.id,
-    )!;
-
-    final event = NodeLifecycleEvent(
-      type: NodeLifecycleType.update,
-      state: _controller.currentState,
-      nodeId: node.id,
-      data: {'old': oldNode, 'new': newNode},
-    );
-    _nodesStateStreams.emitEvent(event);
   }
 
   void updateNodeRuntimeState(String nodeId, NodeRuntimeState node) {
@@ -147,19 +98,6 @@ class NodesController {
     if (oldNodeState == null || oldNodeState == node) return;
     _controller.updateStateOnly(
         _nodeService.updateNodeRuntimeState(oldState, nodeId, node));
-
-    // TODO: node runtime state even should not be send from same point
-    // it should have its own runtimestate even emmitor
-    // final newState = _controller.currentState;
-    // final newNodeState = _nodeService.getNodeRuntimeState(newState, nodeId)!;
-    // final event = NodeLifecycleEvent(
-    //   type: NodeLifecycleType.update,
-    //   state: _controller.currentState,
-    //   nodeId: nodeId,
-    //   data: {'old': oldNodeState, 'new': newNodeState},
-    // );
-    // _nodesStateStreams.emitEvent(event);
-    // _nodeStateCallbacks.onNodeUpdate(event);
   }
 
   void onNodeTap(String nodeId, TapDownDetails details, bool isSelectable) {
@@ -167,7 +105,6 @@ class NodesController {
     if (isSelectable && !state.selectedNodes.contains(nodeId)) {
       _selectionController.selectNode(nodeId, addToSelection: false);
     }
-    _nodeStreams.emitEvent(NodeClickEvent(nodeId: nodeId, details: details));
   }
 
   void onNodeDragStart(
@@ -194,6 +131,10 @@ class NodesController {
       _nodesBeingDragged = {nodeId};
     }
 
+    // Pre-calculate including descendants for performance
+    _nodesBeingDragged =
+        _nodeService.getDescendants(stateAfterSelection, _nodesBeingDragged);
+
     _dragStartPositions = {};
     for (final id in _nodesBeingDragged) {
       final n = stateAfterSelection.nodes[id];
@@ -204,12 +145,8 @@ class NodesController {
 
     _nodesBeingDragged
         .retainWhere((id) => _dragStartPositions!.containsKey(id));
-
     _controller
         .updateStateOnly(stateAfterSelection.copyWith(dragMode: DragMode.node));
-
-    _nodeStreams
-        .emitEvent(NodeDragStartEvent(nodeId: nodeId, details: details));
   }
 
   void onNodeDragUpdate(DragUpdateDetails details) {
@@ -236,9 +173,6 @@ class NodesController {
 
     _dragStartPositions = null;
     _nodesBeingDragged.clear();
-
-    _nodeStreams
-        .emitEvent(NodeDragStopEvent(nodeId: "group", details: details));
   }
 
   // --- Auto Pan Logic ---
@@ -301,7 +235,8 @@ class NodesController {
     final canvasDelta = -_autoPanVelocity / zoom;
 
     _controller.updateStateOnly(_nodeService.moveNodes(
-        _controller.currentState, _nodesBeingDragged, canvasDelta));
+        _controller.currentState, _nodesBeingDragged, canvasDelta,
+        includeDescendants: false));
 
     // Also update edge geometry
     _controller.edgeGeometryService
@@ -328,8 +263,10 @@ class NodesController {
     if (cartesianDelta == Offset.zero) return;
 
     // Use the generic `moveNodes` service, not `moveSelectedNodes`
+    // We already have the full set of nodes (including descendants), so skip traversal
     _controller.updateStateOnly(_nodeService.moveNodes(
-        _controller.currentState, nodesToMove, cartesianDelta));
+        _controller.currentState, nodesToMove, cartesianDelta,
+        includeDescendants: false));
 
     _controller.edgeGeometryService
         .updateEdgesForNodes(_controller.currentState, nodesToMove);
@@ -341,14 +278,6 @@ class NodesController {
         movedNodePositions[nodeId] = node.position;
       }
     }
-
-    if (movedNodePositions.isNotEmpty) {
-      _nodeStreams.emitEvent(NodesDragEvent(
-        positions: movedNodePositions,
-        delta: cartesianDelta,
-        details: details,
-      ));
-    }
   }
 
   void onNodeMouseEnter(String nodeId, PointerEvent details) {
@@ -357,14 +286,9 @@ class NodesController {
     if (nodeState == null) return;
     _controller.updateStateOnly(_nodeService.updateNodeRuntimeState(
         _controller.currentState, nodeId, nodeState.copyWith(hovered: true)));
-    _nodeStreams
-        .emitEvent(NodeMouseEnterEvent(nodeId: nodeId, details: details));
   }
 
-  void onNodeMouseMove(String nodeId, PointerEvent details) {
-    _nodeStreams
-        .emitEvent(NodeMouseMoveEvent(nodeId: nodeId, details: details));
-  }
+  void onNodeMouseMove(String nodeId, PointerEvent details) {}
 
   void onNodeMouseLeave(String nodeId, PointerEvent details) {
     final nodeState =
@@ -372,7 +296,5 @@ class NodesController {
     if (nodeState == null) return;
     _controller.updateStateOnly(_nodeService.updateNodeRuntimeState(
         _controller.currentState, nodeId, nodeState.copyWith(hovered: false)));
-    _nodeStreams
-        .emitEvent(NodeMouseLeaveEvent(nodeId: nodeId, details: details));
   }
 }

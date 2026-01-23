@@ -186,7 +186,7 @@ class ConnectionService {
         );
         final newEdges = Map<String, FlowEdge>.from(state.edges)
           ..[newEdge.id] = newEdge;
-        final newEdgeIndex = state.edgeIndex.addEdge(newEdge, newEdge.id);
+        final newEdgeIndex = state.edgeIndex!.addEdge(newEdge, newEdge.id);
 
         return state.copyWith(
           edges: newEdges,
@@ -261,7 +261,7 @@ class ConnectionService {
 
     if (sourceNode == null || sourceHandle == null) return null;
 
-    final nearbyHandles = state.nodeIndex.queryHandlesNear(cursorPosition);
+    final nearbyHandles = state.nodeIndex!.queryHandlesNear(cursorPosition);
     ClosestHandleResult? closest;
     double minDistance = double.infinity;
 

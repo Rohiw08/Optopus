@@ -59,7 +59,7 @@ class DefaultNodeWidget extends ConsumerWidget {
     // Resolve decoration based on current states
     final decoration = theme.resolveDecoration(states);
 
-    print(ref.read(internalControllerProvider));
+    // print(ref.read(internalControllerProvider));
 
     return Stack(
       clipBehavior: Clip.none,

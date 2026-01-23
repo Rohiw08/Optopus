@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flow_canvas/src/shared/enums.dart';
+import 'package:flow_canvas/src/shared/json_converters.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'handle.freezed.dart';
+part 'handle.g.dart';
 
 /// Represents a connection point (handle) on a flow node.
 ///
@@ -90,7 +92,7 @@ abstract class FlowHandle with _$FlowHandle {
     /// - Left side: Offset(0, nodeHeight / 2)
     /// - Right side: Offset(nodeWidth, nodeHeight / 2)
     /// - Top: Offset(nodeWidth / 2, 0)
-    required Offset position,
+    @OffsetConverter() required Offset position,
 
     /// Whether this handle can accept new connections.
     ///
@@ -111,7 +113,7 @@ abstract class FlowHandle with _$FlowHandle {
     /// may be smaller. Typical values: 8-16 pixels.
     ///
     /// Default is Size(10, 10).
-    @Default(Size(10, 10)) Size size,
+    @Default(Size(10, 10)) @SizeConverter() Size size,
 
     /// Optional maximum number of connections allowed to this handle.
     ///
@@ -139,6 +141,9 @@ abstract class FlowHandle with _$FlowHandle {
     /// Store application-specific metadata like port names, data types, etc.
     @Default(<String, dynamic>{}) Map<String, dynamic> data,
   }) = _FlowHandle;
+
+  factory FlowHandle.fromJson(Map<String, dynamic> json) =>
+      _$FlowHandleFromJson(json);
 
   // ==========================================================================
   // Position & Bounds Calculations

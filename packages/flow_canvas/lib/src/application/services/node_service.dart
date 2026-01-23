@@ -32,7 +32,7 @@ class NodeService {
       nextZ = math.max(nextZ + 1, node.zIndex);
       final newNode = node.copyWith(zIndex: nextZ);
       newNodes[newNode.id] = newNode;
-      newNodeIndex = newNodeIndex.addNode(newNode);
+      newNodeIndex = newNodeIndex!.addNode(newNode);
     }
 
     return state.copyWith(
@@ -60,7 +60,7 @@ class NodeService {
     for (final nodeId in nodeIdSet) {
       if (!newNodes.containsKey(nodeId)) continue;
       final removedNode = newNodes.remove(nodeId)!;
-      newNodeIndex = newNodeIndex.removeNode(removedNode);
+      newNodeIndex = newNodeIndex!.removeNode(removedNode);
       newSelectedNodes.remove(nodeId);
     }
 
@@ -76,34 +76,16 @@ class NodeService {
   }
 
   FlowCanvasState moveNodes(
-      FlowCanvasState state, Iterable<String> nodeIds, Offset delta) {
+      FlowCanvasState state, Iterable<String> nodeIds, Offset delta,
+      {bool includeDescendants = true}) {
     if (delta == Offset.zero || nodeIds.isEmpty) return state;
 
     final newNodes = Map<String, FlowNode>.from(state.nodes);
-    var newNodeIndex = state.nodeIndex;
+    var newNodeIndex = state.nodeIndex!;
 
-    // Build parent-child map for efficient traversal
-    final parentToChildren = <String, List<String>>{};
-    for (final node in newNodes.values) {
-      if (node.parentId != null) {
-        parentToChildren.putIfAbsent(node.parentId!, () => []).add(node.id);
-      }
-    }
-
-    // Collect all nodes to move, including descendants
-    final allNodesToMove = <String>{};
-    final queue = List<String>.from(nodeIds);
-
-    while (queue.isNotEmpty) {
-      final id = queue.removeLast();
-      if (allNodesToMove.contains(id)) continue;
-      allNodesToMove.add(id);
-
-      final children = parentToChildren[id];
-      if (children != null) {
-        queue.addAll(children);
-      }
-    }
+    // Use provided nodes directly if traversal is skipped, otherwise calculate descendants
+    final Set<String> allNodesToMove =
+        includeDescendants ? getDescendants(state, nodeIds) : nodeIds.toSet();
 
     final nodeUpdates = <FlowNode, FlowNode>{};
 
@@ -129,7 +111,11 @@ class NodeService {
             // This prevents feedback loop when moving parent nodes
             if (node.expandParent && !allNodesToMove.contains(node.parentId)) {
               final parentRect = parent.rect;
-              final childRect = newPosition & node.size;
+              final childRect = Rect.fromCenter(
+                center: newPosition,
+                width: node.size.width,
+                height: node.size.height,
+              );
 
               // Check if child is going outside parent bounds
               if (!parentRect.contains(childRect.topLeft) ||
@@ -153,36 +139,13 @@ class NodeService {
 
                 if (newParentRect != parentRect) {
                   // Calculate how much the parent's position will change
-                  final oldParentCenter = parentRect.center;
                   final newParentCenter = newParentRect.center;
-                  final parentPositionDelta = newParentCenter - oldParentCenter;
 
                   final newParent = parent.copyWith(
                     position: newParentCenter,
                     size: newParentRect.size,
                   );
                   newNodes[parent.id] = newParent;
-
-                  // IMPORTANT: Adjust all OTHER children's positions by the same delta
-                  // to maintain their relative position within the parent.
-                  // Don't adjust the child that triggered the expansion (current node).
-                  if (parentPositionDelta != Offset.zero) {
-                    final children = parentToChildren[parent.id];
-                    if (children != null) {
-                      for (final childId in children) {
-                        // Skip the child that triggered the expansion
-                        if (childId == id) continue;
-
-                        final child = newNodes[childId];
-                        if (child != null) {
-                          final adjustedChild = child.copyWith(
-                            position: child.position + parentPositionDelta,
-                          );
-                          newNodes[childId] = adjustedChild;
-                        }
-                      }
-                    }
-                  }
                 }
               }
             }
@@ -232,7 +195,7 @@ class NodeService {
     final newNodes = Map<String, FlowNode>.from(state.nodes);
     newNodes[node.id] = node;
 
-    final newNodeIndex = state.nodeIndex.updateNode(oldNode, node);
+    final newNodeIndex = state.nodeIndex!.updateNode(oldNode, node);
 
     return state.copyWith(
       nodes: newNodes,
@@ -346,5 +309,33 @@ class NodeService {
     );
 
     return updateNode(state, newNode);
+  }
+
+  /// returns a set of all descendant nodes for the given roots
+  Set<String> getDescendants(
+      FlowCanvasState state, Iterable<String> rootNodeIds) {
+    if (rootNodeIds.isEmpty) return {};
+
+    final parentToChildren = <String, List<String>>{};
+    for (final node in state.nodes.values) {
+      if (node.parentId != null) {
+        parentToChildren.putIfAbsent(node.parentId!, () => []).add(node.id);
+      }
+    }
+
+    final allNodes = <String>{};
+    final queue = List<String>.from(rootNodeIds);
+
+    while (queue.isNotEmpty) {
+      final id = queue.removeLast();
+      if (allNodes.contains(id)) continue;
+      allNodes.add(id);
+
+      final children = parentToChildren[id];
+      if (children != null) {
+        queue.addAll(children);
+      }
+    }
+    return allNodes;
   }
 }

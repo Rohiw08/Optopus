@@ -257,14 +257,18 @@ class FlowConnectionStyle extends ThemeExtension<FlowConnectionStyle>
   ///
   /// Uses blue for active connections and green for valid targets.
   factory FlowConnectionStyle.light() {
-    return const FlowConnectionStyle(
-      activeDecoration: FlowConnectionStrokeStyle(
+    return FlowConnectionStyle(
+      activeDecoration: const FlowConnectionStrokeStyle(
         strokeWidth: 2.0,
         color: Color(0xFF2196F3),
       ),
-      validTargetDecoration: FlowConnectionStrokeStyle(
+      validTargetDecoration: const FlowConnectionStrokeStyle(
         strokeWidth: 2.0,
         color: Color(0xFF4CAF50),
+      ),
+      endMarkerStyle: FlowEdgeMarkerStyle.colored(
+        markerType: EdgeMarkerType.arrowClosed,
+        color: const Color(0xFF2196F3),
       ),
     );
   }
@@ -273,14 +277,18 @@ class FlowConnectionStyle extends ThemeExtension<FlowConnectionStyle>
   ///
   /// Uses lighter blue and green colors optimized for dark backgrounds.
   factory FlowConnectionStyle.dark() {
-    return const FlowConnectionStyle(
-      activeDecoration: FlowConnectionStrokeStyle(
+    return FlowConnectionStyle(
+      activeDecoration: const FlowConnectionStrokeStyle(
         strokeWidth: 2.0,
         color: Color(0xFF64B5F6),
       ),
-      validTargetDecoration: FlowConnectionStrokeStyle(
+      validTargetDecoration: const FlowConnectionStrokeStyle(
         strokeWidth: 2.0,
         color: Color(0xFF81C784),
+      ),
+      endMarkerStyle: FlowEdgeMarkerStyle.colored(
+        markerType: EdgeMarkerType.arrowClosed,
+        color: const Color(0xFF64B5F6),
       ),
     );
   }
@@ -312,8 +320,10 @@ class FlowConnectionStyle extends ThemeExtension<FlowConnectionStyle>
         color: colorScheme.secondary,
       ),
       pathType: EdgePathType.bezier,
-      startMarkerStyle: FlowEdgeMarkerStyle.fromColorScheme(colorScheme),
-      endMarkerStyle: FlowEdgeMarkerStyle.fromColorScheme(colorScheme),
+      startMarkerStyle: FlowEdgeMarkerStyle.fromColorScheme(colorScheme)
+          .copyWith(markerType: EdgeMarkerType.none),
+      endMarkerStyle: FlowEdgeMarkerStyle.fromColorScheme(colorScheme)
+          .copyWith(markerType: EdgeMarkerType.arrowClosed),
     );
   }
 

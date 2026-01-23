@@ -189,6 +189,7 @@ class EdgeIndex {
     }
   }
 
+  // ignore: unintended_html_in_doc_comment
   /// Removes a value from a [Map]<String,Set<String>> immutably.
   static void _removeValue(
       Map<String, Set<String>> map, String key, String value) {
@@ -208,7 +209,7 @@ class EdgeIndex {
     return copy;
   }
 
-  /// Deep clones a map of map<int>.
+  /// Deep clones a map of map int.
   static Map<String, Map<String, int>> _cloneConnections(
     Map<String, Map<String, int>> src,
   ) {

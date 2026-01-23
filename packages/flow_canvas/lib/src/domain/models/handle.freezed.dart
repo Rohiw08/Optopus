@@ -34,6 +34,7 @@ mixin _$FlowHandle implements DiagnosticableTreeMixin {
   /// - Left side: Offset(0, nodeHeight / 2)
   /// - Right side: Offset(nodeWidth, nodeHeight / 2)
   /// - Top: Offset(nodeWidth / 2, 0)
+  @OffsetConverter()
   Offset get position;
 
   /// Whether this handle can accept new connections.
@@ -55,6 +56,7 @@ mixin _$FlowHandle implements DiagnosticableTreeMixin {
   /// may be smaller. Typical values: 8-16 pixels.
   ///
   /// Default is Size(10, 10).
+  @SizeConverter()
   Size get size;
 
   /// Optional maximum number of connections allowed to this handle.
@@ -90,6 +92,9 @@ mixin _$FlowHandle implements DiagnosticableTreeMixin {
   $FlowHandleCopyWith<FlowHandle> get copyWith =>
       _$FlowHandleCopyWithImpl<FlowHandle>(this as FlowHandle, _$identity);
 
+  /// Serializes this FlowHandle to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     properties
@@ -123,6 +128,7 @@ mixin _$FlowHandle implements DiagnosticableTreeMixin {
             const DeepCollectionEquality().equals(other.data, data));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -150,9 +156,9 @@ abstract mixin class $FlowHandleCopyWith<$Res> {
   $Res call(
       {String id,
       HandleType type,
-      Offset position,
+      @OffsetConverter() Offset position,
       bool isConnectable,
-      Size size,
+      @SizeConverter() Size size,
       int? maxConnections,
       String? connectionGroup,
       Map<String, dynamic> data});
@@ -312,9 +318,9 @@ extension FlowHandlePatterns on FlowHandle {
     TResult Function(
             String id,
             HandleType type,
-            Offset position,
+            @OffsetConverter() Offset position,
             bool isConnectable,
-            Size size,
+            @SizeConverter() Size size,
             int? maxConnections,
             String? connectionGroup,
             Map<String, dynamic> data)?
@@ -356,9 +362,9 @@ extension FlowHandlePatterns on FlowHandle {
     TResult Function(
             String id,
             HandleType type,
-            Offset position,
+            @OffsetConverter() Offset position,
             bool isConnectable,
-            Size size,
+            @SizeConverter() Size size,
             int? maxConnections,
             String? connectionGroup,
             Map<String, dynamic> data)
@@ -398,9 +404,9 @@ extension FlowHandlePatterns on FlowHandle {
     TResult? Function(
             String id,
             HandleType type,
-            Offset position,
+            @OffsetConverter() Offset position,
             bool isConnectable,
-            Size size,
+            @SizeConverter() Size size,
             int? maxConnections,
             String? connectionGroup,
             Map<String, dynamic> data)?
@@ -425,19 +431,21 @@ extension FlowHandlePatterns on FlowHandle {
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _FlowHandle extends FlowHandle with DiagnosticableTreeMixin {
   const _FlowHandle(
       {required this.id,
       required this.type,
-      required this.position,
+      @OffsetConverter() required this.position,
       this.isConnectable = true,
-      this.size = const Size(10, 10),
+      @SizeConverter() this.size = const Size(10, 10),
       this.maxConnections,
       this.connectionGroup,
       final Map<String, dynamic> data = const <String, dynamic>{}})
       : _data = data,
         super._();
+  factory _FlowHandle.fromJson(Map<String, dynamic> json) =>
+      _$FlowHandleFromJson(json);
 
   /// Unique identifier for this handle within its parent node.
   ///
@@ -462,6 +470,7 @@ class _FlowHandle extends FlowHandle with DiagnosticableTreeMixin {
   /// - Right side: Offset(nodeWidth, nodeHeight / 2)
   /// - Top: Offset(nodeWidth / 2, 0)
   @override
+  @OffsetConverter()
   final Offset position;
 
   /// Whether this handle can accept new connections.
@@ -487,6 +496,7 @@ class _FlowHandle extends FlowHandle with DiagnosticableTreeMixin {
   /// Default is Size(10, 10).
   @override
   @JsonKey()
+  @SizeConverter()
   final Size size;
 
   /// Optional maximum number of connections allowed to this handle.
@@ -537,6 +547,13 @@ class _FlowHandle extends FlowHandle with DiagnosticableTreeMixin {
       __$FlowHandleCopyWithImpl<_FlowHandle>(this, _$identity);
 
   @override
+  Map<String, dynamic> toJson() {
+    return _$FlowHandleToJson(
+      this,
+    );
+  }
+
+  @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     properties
       ..add(DiagnosticsProperty('type', 'FlowHandle'))
@@ -569,6 +586,7 @@ class _FlowHandle extends FlowHandle with DiagnosticableTreeMixin {
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -598,9 +616,9 @@ abstract mixin class _$FlowHandleCopyWith<$Res>
   $Res call(
       {String id,
       HandleType type,
-      Offset position,
+      @OffsetConverter() Offset position,
       bool isConnectable,
-      Size size,
+      @SizeConverter() Size size,
       int? maxConnections,
       String? connectionGroup,
       Map<String, dynamic> data});

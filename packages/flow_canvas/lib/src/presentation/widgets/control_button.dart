@@ -40,7 +40,7 @@ class ControlButton extends StatefulWidget {
     super.key,
     required this.icon,
     required this.tooltip,
-    this.buttonSize = const Size(32.0, 32.0),
+    this.buttonSize = const Size(28.0, 28.0),
     this.selected = false,
     this.onPressed,
     this.style,

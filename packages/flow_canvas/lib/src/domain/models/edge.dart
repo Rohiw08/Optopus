@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target, deprecated_member_use
+
 import 'package:flutter/widgets.dart';
 import 'package:flow_canvas/src/presentation/theme/components/edge_label_theme.dart';
 import 'package:flow_canvas/src/presentation/theme/components/edge_marker_theme.dart';
@@ -6,6 +8,7 @@ import 'package:flow_canvas/src/shared/enums.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'edge.freezed.dart';
+part 'edge.g.dart';
 
 /// Represents a permanent connection (edge) between two nodes in the flow canvas.
 ///
@@ -125,29 +128,29 @@ abstract class FlowEdge with _$FlowEdge {
     ///
     /// Typically a Text widget, but can be any widget. Positioned at the
     /// center of the edge path.
-    Widget? label,
+    @JsonKey(ignore: true) Widget? label,
 
     /// Optional decoration for the label container.
     ///
     /// Controls background, border, padding, etc. of the label.
     /// If null, uses default decoration or no decoration.
-    FlowEdgeLabelStyle? labelDecoration,
+    @JsonKey(ignore: true) FlowEdgeLabelStyle? labelDecoration,
 
     /// Optional custom marker style for the start of the edge.
     ///
     /// Common options: arrow, circle, diamond. If null, no start marker.
-    FlowEdgeMarkerStyle? startMarkerStyle,
+    @JsonKey(ignore: true) FlowEdgeMarkerStyle? startMarkerStyle,
 
     /// Optional custom marker style for the end of the edge.
     ///
     /// Common options: arrow, circle, diamond. If null, no end marker.
-    FlowEdgeMarkerStyle? endMarkerStyle,
+    @JsonKey(ignore: true) FlowEdgeMarkerStyle? endMarkerStyle,
 
     /// Optional custom style for this edge.
     ///
     /// Controls stroke width, color, dash pattern, etc.
     /// If null, uses the style from the current theme.
-    FlowEdgeStyle? style,
+    @JsonKey(ignore: true) FlowEdgeStyle? style,
 
     /// Custom data that can be attached to this edge.
     ///
@@ -193,6 +196,9 @@ abstract class FlowEdge with _$FlowEdge {
     /// If null, uses the global canvas setting.
     bool? elevateEdgeOnSelect,
   }) = _FlowEdge;
+
+  factory FlowEdge.fromJson(Map<String, dynamic> json) =>
+      _$FlowEdgeFromJson(json);
 
   // ==========================================================================
   // Connection Query Methods (Domain Logic)

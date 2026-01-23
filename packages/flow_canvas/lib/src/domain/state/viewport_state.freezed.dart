@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FlowViewport {
   /// Canvas translation offset in Cartesian space.
+  @OffsetConverter()
   Offset get offset;
 
   /// Current zoom level (1.0 = 100%) — affects all scale-related rendering.
@@ -30,6 +31,9 @@ mixin _$FlowViewport {
       _$FlowViewportCopyWithImpl<FlowViewport>(
           this as FlowViewport, _$identity);
 
+  /// Serializes this FlowViewport to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -39,6 +43,7 @@ mixin _$FlowViewport {
             (identical(other.zoom, zoom) || other.zoom == zoom));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, offset, zoom);
 
@@ -54,7 +59,7 @@ abstract mixin class $FlowViewportCopyWith<$Res> {
           FlowViewport value, $Res Function(FlowViewport) _then) =
       _$FlowViewportCopyWithImpl;
   @useResult
-  $Res call({Offset offset, double zoom});
+  $Res call({@OffsetConverter() Offset offset, double zoom});
 }
 
 /// @nodoc
@@ -178,7 +183,7 @@ extension FlowViewportPatterns on FlowViewport {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(Offset offset, double zoom)? $default, {
+    TResult Function(@OffsetConverter() Offset offset, double zoom)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
@@ -205,7 +210,7 @@ extension FlowViewportPatterns on FlowViewport {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(Offset offset, double zoom) $default,
+    TResult Function(@OffsetConverter() Offset offset, double zoom) $default,
   ) {
     final _that = this;
     switch (_that) {
@@ -230,7 +235,7 @@ extension FlowViewportPatterns on FlowViewport {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(Offset offset, double zoom)? $default,
+    TResult? Function(@OffsetConverter() Offset offset, double zoom)? $default,
   ) {
     final _that = this;
     switch (_that) {
@@ -243,13 +248,18 @@ extension FlowViewportPatterns on FlowViewport {
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _FlowViewport extends FlowViewport {
-  const _FlowViewport({this.offset = Offset.zero, this.zoom = 1.0}) : super._();
+  const _FlowViewport(
+      {@OffsetConverter() this.offset = Offset.zero, this.zoom = 1.0})
+      : super._();
+  factory _FlowViewport.fromJson(Map<String, dynamic> json) =>
+      _$FlowViewportFromJson(json);
 
   /// Canvas translation offset in Cartesian space.
   @override
   @JsonKey()
+  @OffsetConverter()
   final Offset offset;
 
   /// Current zoom level (1.0 = 100%) — affects all scale-related rendering.
@@ -268,6 +278,13 @@ class _FlowViewport extends FlowViewport {
       __$FlowViewportCopyWithImpl<_FlowViewport>(this, _$identity);
 
   @override
+  Map<String, dynamic> toJson() {
+    return _$FlowViewportToJson(
+      this,
+    );
+  }
+
+  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
@@ -276,6 +293,7 @@ class _FlowViewport extends FlowViewport {
             (identical(other.zoom, zoom) || other.zoom == zoom));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, offset, zoom);
 
@@ -293,7 +311,7 @@ abstract mixin class _$FlowViewportCopyWith<$Res>
       __$FlowViewportCopyWithImpl;
   @override
   @useResult
-  $Res call({Offset offset, double zoom});
+  $Res call({@OffsetConverter() Offset offset, double zoom});
 }
 
 /// @nodoc

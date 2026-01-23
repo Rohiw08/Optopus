@@ -15,25 +15,42 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FlowCanvasState {
 // Core graph data
+  @NodeMapConverter()
   Map<String, FlowNode> get nodes;
   Map<String, FlowEdge> get edges; // Runtime node/edge/handle states
+  @JsonKey(ignore: true)
   Map<String, NodeRuntimeState> get nodeStates;
+  @JsonKey(ignore: true)
   Map<String, EdgeRuntimeState> get edgeStates;
+  @JsonKey(ignore: true)
   Map<String, HandleRuntimeState> get handleStates; // Selection and z-ordering
   Set<String> get selectedNodes;
   Set<String> get selectedEdges;
   int get minZIndex;
-  int get maxZIndex; // Spatial indexing
-  NodeIndex get nodeIndex;
-  EdgeIndex get edgeIndex; // Viewport
+  int get maxZIndex; // --- FIX START ---
+// Make these nullable so .fromJson can instantiate the class without them.
+// Since they are ignored in JSON, they will be null when loading from file.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  NodeIndex? get nodeIndex;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  EdgeIndex? get edgeIndex; // --- FIX END ---
+// Viewport
   FlowViewport get viewport;
+  @SizeConverter()
   Size? get viewportSize;
   bool get isPanZoomLocked; // Interaction state
+  @JsonKey(ignore: true)
   DragMode get dragMode;
+  @JsonKey(ignore: true)
   FlowConnection? get activeConnection;
+  @JsonKey(ignore: true)
   FlowConnectionRuntimeState get connectionState;
+  @RectConverter()
+  @JsonKey(ignore: true)
   Rect get selectionRect;
+  @JsonKey(ignore: true)
   String get hoveredEdgeId;
+  @JsonKey(ignore: true)
   String get lastClickedEdgeId;
 
   /// Create a copy of FlowCanvasState
@@ -43,6 +60,9 @@ mixin _$FlowCanvasState {
   $FlowCanvasStateCopyWith<FlowCanvasState> get copyWith =>
       _$FlowCanvasStateCopyWithImpl<FlowCanvasState>(
           this as FlowCanvasState, _$identity);
+
+  /// Serializes this FlowCanvasState to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
@@ -89,6 +109,7 @@ mixin _$FlowCanvasState {
                 other.lastClickedEdgeId == lastClickedEdgeId));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -127,26 +148,28 @@ abstract mixin class $FlowCanvasStateCopyWith<$Res> {
       _$FlowCanvasStateCopyWithImpl;
   @useResult
   $Res call(
-      {Map<String, FlowNode> nodes,
+      {@NodeMapConverter() Map<String, FlowNode> nodes,
       Map<String, FlowEdge> edges,
-      Map<String, NodeRuntimeState> nodeStates,
-      Map<String, EdgeRuntimeState> edgeStates,
-      Map<String, HandleRuntimeState> handleStates,
+      @JsonKey(ignore: true) Map<String, NodeRuntimeState> nodeStates,
+      @JsonKey(ignore: true) Map<String, EdgeRuntimeState> edgeStates,
+      @JsonKey(ignore: true) Map<String, HandleRuntimeState> handleStates,
       Set<String> selectedNodes,
       Set<String> selectedEdges,
       int minZIndex,
       int maxZIndex,
-      NodeIndex nodeIndex,
-      EdgeIndex edgeIndex,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      NodeIndex? nodeIndex,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      EdgeIndex? edgeIndex,
       FlowViewport viewport,
-      Size? viewportSize,
+      @SizeConverter() Size? viewportSize,
       bool isPanZoomLocked,
-      DragMode dragMode,
-      FlowConnection? activeConnection,
-      FlowConnectionRuntimeState connectionState,
-      Rect selectionRect,
-      String hoveredEdgeId,
-      String lastClickedEdgeId});
+      @JsonKey(ignore: true) DragMode dragMode,
+      @JsonKey(ignore: true) FlowConnection? activeConnection,
+      @JsonKey(ignore: true) FlowConnectionRuntimeState connectionState,
+      @RectConverter() @JsonKey(ignore: true) Rect selectionRect,
+      @JsonKey(ignore: true) String hoveredEdgeId,
+      @JsonKey(ignore: true) String lastClickedEdgeId});
 
   $FlowViewportCopyWith<$Res> get viewport;
   $FlowConnectionCopyWith<$Res>? get activeConnection;
@@ -175,8 +198,8 @@ class _$FlowCanvasStateCopyWithImpl<$Res>
     Object? selectedEdges = null,
     Object? minZIndex = null,
     Object? maxZIndex = null,
-    Object? nodeIndex = null,
-    Object? edgeIndex = null,
+    Object? nodeIndex = freezed,
+    Object? edgeIndex = freezed,
     Object? viewport = null,
     Object? viewportSize = freezed,
     Object? isPanZoomLocked = null,
@@ -224,14 +247,14 @@ class _$FlowCanvasStateCopyWithImpl<$Res>
           ? _self.maxZIndex
           : maxZIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      nodeIndex: null == nodeIndex
+      nodeIndex: freezed == nodeIndex
           ? _self.nodeIndex
           : nodeIndex // ignore: cast_nullable_to_non_nullable
-              as NodeIndex,
-      edgeIndex: null == edgeIndex
+              as NodeIndex?,
+      edgeIndex: freezed == edgeIndex
           ? _self.edgeIndex
           : edgeIndex // ignore: cast_nullable_to_non_nullable
-              as EdgeIndex,
+              as EdgeIndex?,
       viewport: null == viewport
           ? _self.viewport
           : viewport // ignore: cast_nullable_to_non_nullable
@@ -401,26 +424,28 @@ extension FlowCanvasStatePatterns on FlowCanvasState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            Map<String, FlowNode> nodes,
+            @NodeMapConverter() Map<String, FlowNode> nodes,
             Map<String, FlowEdge> edges,
-            Map<String, NodeRuntimeState> nodeStates,
-            Map<String, EdgeRuntimeState> edgeStates,
-            Map<String, HandleRuntimeState> handleStates,
+            @JsonKey(ignore: true) Map<String, NodeRuntimeState> nodeStates,
+            @JsonKey(ignore: true) Map<String, EdgeRuntimeState> edgeStates,
+            @JsonKey(ignore: true) Map<String, HandleRuntimeState> handleStates,
             Set<String> selectedNodes,
             Set<String> selectedEdges,
             int minZIndex,
             int maxZIndex,
-            NodeIndex nodeIndex,
-            EdgeIndex edgeIndex,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            NodeIndex? nodeIndex,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            EdgeIndex? edgeIndex,
             FlowViewport viewport,
-            Size? viewportSize,
+            @SizeConverter() Size? viewportSize,
             bool isPanZoomLocked,
-            DragMode dragMode,
-            FlowConnection? activeConnection,
-            FlowConnectionRuntimeState connectionState,
-            Rect selectionRect,
-            String hoveredEdgeId,
-            String lastClickedEdgeId)?
+            @JsonKey(ignore: true) DragMode dragMode,
+            @JsonKey(ignore: true) FlowConnection? activeConnection,
+            @JsonKey(ignore: true) FlowConnectionRuntimeState connectionState,
+            @RectConverter() @JsonKey(ignore: true) Rect selectionRect,
+            @JsonKey(ignore: true) String hoveredEdgeId,
+            @JsonKey(ignore: true) String lastClickedEdgeId)?
         $default, {
     required TResult orElse(),
   }) {
@@ -469,26 +494,28 @@ extension FlowCanvasStatePatterns on FlowCanvasState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            Map<String, FlowNode> nodes,
+            @NodeMapConverter() Map<String, FlowNode> nodes,
             Map<String, FlowEdge> edges,
-            Map<String, NodeRuntimeState> nodeStates,
-            Map<String, EdgeRuntimeState> edgeStates,
-            Map<String, HandleRuntimeState> handleStates,
+            @JsonKey(ignore: true) Map<String, NodeRuntimeState> nodeStates,
+            @JsonKey(ignore: true) Map<String, EdgeRuntimeState> edgeStates,
+            @JsonKey(ignore: true) Map<String, HandleRuntimeState> handleStates,
             Set<String> selectedNodes,
             Set<String> selectedEdges,
             int minZIndex,
             int maxZIndex,
-            NodeIndex nodeIndex,
-            EdgeIndex edgeIndex,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            NodeIndex? nodeIndex,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            EdgeIndex? edgeIndex,
             FlowViewport viewport,
-            Size? viewportSize,
+            @SizeConverter() Size? viewportSize,
             bool isPanZoomLocked,
-            DragMode dragMode,
-            FlowConnection? activeConnection,
-            FlowConnectionRuntimeState connectionState,
-            Rect selectionRect,
-            String hoveredEdgeId,
-            String lastClickedEdgeId)
+            @JsonKey(ignore: true) DragMode dragMode,
+            @JsonKey(ignore: true) FlowConnection? activeConnection,
+            @JsonKey(ignore: true) FlowConnectionRuntimeState connectionState,
+            @RectConverter() @JsonKey(ignore: true) Rect selectionRect,
+            @JsonKey(ignore: true) String hoveredEdgeId,
+            @JsonKey(ignore: true) String lastClickedEdgeId)
         $default,
   ) {
     final _that = this;
@@ -535,26 +562,28 @@ extension FlowCanvasStatePatterns on FlowCanvasState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            Map<String, FlowNode> nodes,
+            @NodeMapConverter() Map<String, FlowNode> nodes,
             Map<String, FlowEdge> edges,
-            Map<String, NodeRuntimeState> nodeStates,
-            Map<String, EdgeRuntimeState> edgeStates,
-            Map<String, HandleRuntimeState> handleStates,
+            @JsonKey(ignore: true) Map<String, NodeRuntimeState> nodeStates,
+            @JsonKey(ignore: true) Map<String, EdgeRuntimeState> edgeStates,
+            @JsonKey(ignore: true) Map<String, HandleRuntimeState> handleStates,
             Set<String> selectedNodes,
             Set<String> selectedEdges,
             int minZIndex,
             int maxZIndex,
-            NodeIndex nodeIndex,
-            EdgeIndex edgeIndex,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            NodeIndex? nodeIndex,
+            @JsonKey(includeFromJson: false, includeToJson: false)
+            EdgeIndex? edgeIndex,
             FlowViewport viewport,
-            Size? viewportSize,
+            @SizeConverter() Size? viewportSize,
             bool isPanZoomLocked,
-            DragMode dragMode,
-            FlowConnection? activeConnection,
-            FlowConnectionRuntimeState connectionState,
-            Rect selectionRect,
-            String hoveredEdgeId,
-            String lastClickedEdgeId)?
+            @JsonKey(ignore: true) DragMode dragMode,
+            @JsonKey(ignore: true) FlowConnection? activeConnection,
+            @JsonKey(ignore: true) FlowConnectionRuntimeState connectionState,
+            @RectConverter() @JsonKey(ignore: true) Rect selectionRect,
+            @JsonKey(ignore: true) String hoveredEdgeId,
+            @JsonKey(ignore: true) String lastClickedEdgeId)?
         $default,
   ) {
     final _that = this;
@@ -588,29 +617,33 @@ extension FlowCanvasStatePatterns on FlowCanvasState {
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _FlowCanvasState extends FlowCanvasState {
   const _FlowCanvasState(
-      {final Map<String, FlowNode> nodes = const {},
+      {@NodeMapConverter() final Map<String, FlowNode> nodes = const {},
       final Map<String, FlowEdge> edges = const {},
+      @JsonKey(ignore: true)
       final Map<String, NodeRuntimeState> nodeStates = const {},
+      @JsonKey(ignore: true)
       final Map<String, EdgeRuntimeState> edgeStates = const {},
+      @JsonKey(ignore: true)
       final Map<String, HandleRuntimeState> handleStates = const {},
       final Set<String> selectedNodes = const {},
       final Set<String> selectedEdges = const {},
       this.minZIndex = 0,
       this.maxZIndex = 0,
-      required this.nodeIndex,
-      required this.edgeIndex,
+      @JsonKey(includeFromJson: false, includeToJson: false) this.nodeIndex,
+      @JsonKey(includeFromJson: false, includeToJson: false) this.edgeIndex,
       this.viewport = const FlowViewport(),
-      this.viewportSize,
+      @SizeConverter() this.viewportSize,
       this.isPanZoomLocked = false,
-      this.dragMode = DragMode.none,
-      this.activeConnection,
+      @JsonKey(ignore: true) this.dragMode = DragMode.none,
+      @JsonKey(ignore: true) this.activeConnection,
+      @JsonKey(ignore: true)
       this.connectionState = const FlowConnectionRuntimeState.idle(),
-      this.selectionRect = Rect.zero,
-      this.hoveredEdgeId = '',
-      this.lastClickedEdgeId = ''})
+      @RectConverter() @JsonKey(ignore: true) this.selectionRect = Rect.zero,
+      @JsonKey(ignore: true) this.hoveredEdgeId = '',
+      @JsonKey(ignore: true) this.lastClickedEdgeId = ''})
       : _nodes = nodes,
         _edges = edges,
         _nodeStates = nodeStates,
@@ -619,12 +652,15 @@ class _FlowCanvasState extends FlowCanvasState {
         _selectedNodes = selectedNodes,
         _selectedEdges = selectedEdges,
         super._();
+  factory _FlowCanvasState.fromJson(Map<String, dynamic> json) =>
+      _$FlowCanvasStateFromJson(json);
 
 // Core graph data
   final Map<String, FlowNode> _nodes;
 // Core graph data
   @override
   @JsonKey()
+  @NodeMapConverter()
   Map<String, FlowNode> get nodes {
     if (_nodes is EqualUnmodifiableMapView) return _nodes;
     // ignore: implicit_dynamic_type
@@ -644,7 +680,7 @@ class _FlowCanvasState extends FlowCanvasState {
   final Map<String, NodeRuntimeState> _nodeStates;
 // Runtime node/edge/handle states
   @override
-  @JsonKey()
+  @JsonKey(ignore: true)
   Map<String, NodeRuntimeState> get nodeStates {
     if (_nodeStates is EqualUnmodifiableMapView) return _nodeStates;
     // ignore: implicit_dynamic_type
@@ -653,7 +689,7 @@ class _FlowCanvasState extends FlowCanvasState {
 
   final Map<String, EdgeRuntimeState> _edgeStates;
   @override
-  @JsonKey()
+  @JsonKey(ignore: true)
   Map<String, EdgeRuntimeState> get edgeStates {
     if (_edgeStates is EqualUnmodifiableMapView) return _edgeStates;
     // ignore: implicit_dynamic_type
@@ -662,7 +698,7 @@ class _FlowCanvasState extends FlowCanvasState {
 
   final Map<String, HandleRuntimeState> _handleStates;
   @override
-  @JsonKey()
+  @JsonKey(ignore: true)
   Map<String, HandleRuntimeState> get handleStates {
     if (_handleStates is EqualUnmodifiableMapView) return _handleStates;
     // ignore: implicit_dynamic_type
@@ -695,37 +731,45 @@ class _FlowCanvasState extends FlowCanvasState {
   @override
   @JsonKey()
   final int maxZIndex;
-// Spatial indexing
+// --- FIX START ---
+// Make these nullable so .fromJson can instantiate the class without them.
+// Since they are ignored in JSON, they will be null when loading from file.
   @override
-  final NodeIndex nodeIndex;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final NodeIndex? nodeIndex;
   @override
-  final EdgeIndex edgeIndex;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final EdgeIndex? edgeIndex;
+// --- FIX END ---
 // Viewport
   @override
   @JsonKey()
   final FlowViewport viewport;
   @override
+  @SizeConverter()
   final Size? viewportSize;
   @override
   @JsonKey()
   final bool isPanZoomLocked;
 // Interaction state
   @override
-  @JsonKey()
+  @JsonKey(ignore: true)
   final DragMode dragMode;
   @override
+  @JsonKey(ignore: true)
   final FlowConnection? activeConnection;
   @override
-  @JsonKey()
+  @JsonKey(ignore: true)
   final FlowConnectionRuntimeState connectionState;
   @override
-  @JsonKey()
+  @RectConverter()
+  @JsonKey(ignore: true)
   final Rect selectionRect;
   @override
-  @JsonKey()
+  @JsonKey(ignore: true)
   final String hoveredEdgeId;
   @override
-  @JsonKey()
+  @JsonKey(ignore: true)
   final String lastClickedEdgeId;
 
   /// Create a copy of FlowCanvasState
@@ -735,6 +779,13 @@ class _FlowCanvasState extends FlowCanvasState {
   @pragma('vm:prefer-inline')
   _$FlowCanvasStateCopyWith<_FlowCanvasState> get copyWith =>
       __$FlowCanvasStateCopyWithImpl<_FlowCanvasState>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$FlowCanvasStateToJson(
+      this,
+    );
+  }
 
   @override
   bool operator ==(Object other) {
@@ -781,6 +832,7 @@ class _FlowCanvasState extends FlowCanvasState {
                 other.lastClickedEdgeId == lastClickedEdgeId));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -821,26 +873,28 @@ abstract mixin class _$FlowCanvasStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Map<String, FlowNode> nodes,
+      {@NodeMapConverter() Map<String, FlowNode> nodes,
       Map<String, FlowEdge> edges,
-      Map<String, NodeRuntimeState> nodeStates,
-      Map<String, EdgeRuntimeState> edgeStates,
-      Map<String, HandleRuntimeState> handleStates,
+      @JsonKey(ignore: true) Map<String, NodeRuntimeState> nodeStates,
+      @JsonKey(ignore: true) Map<String, EdgeRuntimeState> edgeStates,
+      @JsonKey(ignore: true) Map<String, HandleRuntimeState> handleStates,
       Set<String> selectedNodes,
       Set<String> selectedEdges,
       int minZIndex,
       int maxZIndex,
-      NodeIndex nodeIndex,
-      EdgeIndex edgeIndex,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      NodeIndex? nodeIndex,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      EdgeIndex? edgeIndex,
       FlowViewport viewport,
-      Size? viewportSize,
+      @SizeConverter() Size? viewportSize,
       bool isPanZoomLocked,
-      DragMode dragMode,
-      FlowConnection? activeConnection,
-      FlowConnectionRuntimeState connectionState,
-      Rect selectionRect,
-      String hoveredEdgeId,
-      String lastClickedEdgeId});
+      @JsonKey(ignore: true) DragMode dragMode,
+      @JsonKey(ignore: true) FlowConnection? activeConnection,
+      @JsonKey(ignore: true) FlowConnectionRuntimeState connectionState,
+      @RectConverter() @JsonKey(ignore: true) Rect selectionRect,
+      @JsonKey(ignore: true) String hoveredEdgeId,
+      @JsonKey(ignore: true) String lastClickedEdgeId});
 
   @override
   $FlowViewportCopyWith<$Res> get viewport;
@@ -872,8 +926,8 @@ class __$FlowCanvasStateCopyWithImpl<$Res>
     Object? selectedEdges = null,
     Object? minZIndex = null,
     Object? maxZIndex = null,
-    Object? nodeIndex = null,
-    Object? edgeIndex = null,
+    Object? nodeIndex = freezed,
+    Object? edgeIndex = freezed,
     Object? viewport = null,
     Object? viewportSize = freezed,
     Object? isPanZoomLocked = null,
@@ -921,14 +975,14 @@ class __$FlowCanvasStateCopyWithImpl<$Res>
           ? _self.maxZIndex
           : maxZIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      nodeIndex: null == nodeIndex
+      nodeIndex: freezed == nodeIndex
           ? _self.nodeIndex
           : nodeIndex // ignore: cast_nullable_to_non_nullable
-              as NodeIndex,
-      edgeIndex: null == edgeIndex
+              as NodeIndex?,
+      edgeIndex: freezed == edgeIndex
           ? _self.edgeIndex
           : edgeIndex // ignore: cast_nullable_to_non_nullable
-              as EdgeIndex,
+              as EdgeIndex?,
       viewport: null == viewport
           ? _self.viewport
           : viewport // ignore: cast_nullable_to_non_nullable

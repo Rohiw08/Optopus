@@ -35,7 +35,7 @@ class EdgeService {
     final newEdges = Map<String, FlowEdge>.from(state.edges);
     newEdges[edge.id] = edge;
 
-    final newIndex = state.edgeIndex.addEdge(edge, edge.id);
+    final newIndex = state.edgeIndex!.addEdge(edge, edge.id);
 
     return state.copyWith(
       edges: newEdges,
@@ -48,7 +48,7 @@ class EdgeService {
     if (edges.isEmpty) return state;
 
     Map<String, FlowEdge> newEdges = Map.from(state.edges);
-    EdgeIndex newIndex = state.edgeIndex;
+    EdgeIndex newIndex = state.edgeIndex!;
     bool changed = false;
 
     for (final edge in edges) {
@@ -75,7 +75,7 @@ class EdgeService {
     final newEdges = Map<String, FlowEdge>.from(state.edges);
     newEdges.remove(edgeId);
 
-    final newIndex = state.edgeIndex.removeEdge(edgeId, edge);
+    final newIndex = state.edgeIndex!.removeEdge(edgeId, edge);
 
     return state.copyWith(
       edges: newEdges,
@@ -88,7 +88,7 @@ class EdgeService {
     if (edgeIds.isEmpty) return state;
 
     final newEdges = Map<String, FlowEdge>.from(state.edges);
-    EdgeIndex newIndex = state.edgeIndex;
+    EdgeIndex newIndex = state.edgeIndex!;
     bool changed = false;
 
     for (final edgeId in edgeIds) {

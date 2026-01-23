@@ -24,6 +24,7 @@ mixin _$FlowNode<T> {
   String get type;
 
   /// Position of the node's center in canvas coordinates.
+  @OffsetConverter()
   Offset get position;
 
   /// Custom data attached to this node.
@@ -37,6 +38,7 @@ mixin _$FlowNode<T> {
   T get data;
 
   /// Size of the node in logical pixels.
+  @SizeConverter()
   Size get size;
 
   /// Z-index for rendering order (higher values render on top).
@@ -76,6 +78,9 @@ mixin _$FlowNode<T> {
   $FlowNodeCopyWith<T, FlowNode<T>> get copyWith =>
       _$FlowNodeCopyWithImpl<T, FlowNode<T>>(this as FlowNode<T>, _$identity);
 
+  /// Serializes this FlowNode to a JSON map.
+  Map<String, dynamic> toJson(Object? Function(T) toJsonT);
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -108,6 +113,7 @@ mixin _$FlowNode<T> {
                 other.expandParent == expandParent));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -144,9 +150,9 @@ abstract mixin class $FlowNodeCopyWith<T, $Res> {
       {String id,
       String? parentId,
       String type,
-      Offset position,
+      @OffsetConverter() Offset position,
       T data,
-      Size size,
+      @SizeConverter() Size size,
       int zIndex,
       Map<String, FlowHandle> handles,
       bool? hidden,
@@ -354,9 +360,9 @@ extension FlowNodePatterns<T> on FlowNode<T> {
             String id,
             String? parentId,
             String type,
-            Offset position,
+            @OffsetConverter() Offset position,
             T data,
-            Size size,
+            @SizeConverter() Size size,
             int zIndex,
             Map<String, FlowHandle> handles,
             bool? hidden,
@@ -414,9 +420,9 @@ extension FlowNodePatterns<T> on FlowNode<T> {
             String id,
             String? parentId,
             String type,
-            Offset position,
+            @OffsetConverter() Offset position,
             T data,
-            Size size,
+            @SizeConverter() Size size,
             int zIndex,
             Map<String, FlowHandle> handles,
             bool? hidden,
@@ -472,9 +478,9 @@ extension FlowNodePatterns<T> on FlowNode<T> {
             String id,
             String? parentId,
             String type,
-            Offset position,
+            @OffsetConverter() Offset position,
             T data,
-            Size size,
+            @SizeConverter() Size size,
             int zIndex,
             Map<String, FlowHandle> handles,
             bool? hidden,
@@ -514,27 +520,30 @@ extension FlowNodePatterns<T> on FlowNode<T> {
 }
 
 /// @nodoc
-
+@JsonSerializable(genericArgumentFactories: true)
 class _FlowNode<T> extends FlowNode<T> {
   const _FlowNode(
       {required this.id,
       this.parentId,
       required this.type,
-      required this.position,
+      @OffsetConverter() required this.position,
       required this.data,
-      this.size = const Size(200, 100),
+      @SizeConverter() this.size = const Size(200, 100),
       this.zIndex = 0,
       final Map<String, FlowHandle> handles = const {},
-      this.hidden,
-      this.draggable,
-      this.selectable,
-      this.hoverable,
-      this.connectable,
-      this.deletable,
-      this.focusable,
+      this.hidden = false,
+      this.draggable = true,
+      this.selectable = true,
+      this.hoverable = true,
+      this.connectable = true,
+      this.deletable = true,
+      this.focusable = true,
       this.expandParent = false})
       : _handles = handles,
         super._();
+  factory _FlowNode.fromJson(
+          Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
+      _$FlowNodeFromJson(json, fromJsonT);
 
   /// Unique identifier for this node.
   @override
@@ -550,6 +559,7 @@ class _FlowNode<T> extends FlowNode<T> {
 
   /// Position of the node's center in canvas coordinates.
   @override
+  @OffsetConverter()
   final Offset position;
 
   /// Custom data attached to this node.
@@ -566,6 +576,7 @@ class _FlowNode<T> extends FlowNode<T> {
   /// Size of the node in logical pixels.
   @override
   @JsonKey()
+  @SizeConverter()
   final Size size;
 
   /// Z-index for rendering order (higher values render on top).
@@ -587,30 +598,37 @@ class _FlowNode<T> extends FlowNode<T> {
 
   /// Whether this node should be hidden from view.
   @override
+  @JsonKey()
   final bool? hidden;
 
   /// Whether this node can be dragged by the user.
   @override
+  @JsonKey()
   final bool? draggable;
 
   /// Whether this node can be selected by the user.
   @override
+  @JsonKey()
   final bool? selectable;
 
   /// Whether this node can be hovered by the user.
   @override
+  @JsonKey()
   final bool? hoverable;
 
   /// Whether edges can be connected to/from this node.
   @override
+  @JsonKey()
   final bool? connectable;
 
   /// Whether this node can be deleted by the user.
   @override
+  @JsonKey()
   final bool? deletable;
 
   /// Whether this node can receive keyboard focus.
   @override
+  @JsonKey()
   final bool? focusable;
 
   /// Whether this node triggers an automatic expansion of its parent group.
@@ -625,6 +643,11 @@ class _FlowNode<T> extends FlowNode<T> {
   @pragma('vm:prefer-inline')
   _$FlowNodeCopyWith<T, _FlowNode<T>> get copyWith =>
       __$FlowNodeCopyWithImpl<T, _FlowNode<T>>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson(Object? Function(T) toJsonT) {
+    return _$FlowNodeToJson<T>(this, toJsonT);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -658,6 +681,7 @@ class _FlowNode<T> extends FlowNode<T> {
                 other.expandParent == expandParent));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -696,9 +720,9 @@ abstract mixin class _$FlowNodeCopyWith<T, $Res>
       {String id,
       String? parentId,
       String type,
-      Offset position,
+      @OffsetConverter() Offset position,
       T data,
-      Size size,
+      @SizeConverter() Size size,
       int zIndex,
       Map<String, FlowHandle> handles,
       bool? hidden,

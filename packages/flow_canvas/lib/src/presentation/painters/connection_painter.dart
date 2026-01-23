@@ -16,7 +16,6 @@ class ConnectionPainter extends CustomPainter {
   final double canvasWidth;
 
   final Paint _connectionPaint;
-  final Paint _markerPaint;
 
   ConnectionPainter({
     required this.connection,
@@ -24,12 +23,9 @@ class ConnectionPainter extends CustomPainter {
     required this.style,
     required this.canvasHeight,
     required this.canvasWidth,
-  })  : _connectionPaint = Paint()
+  }) : _connectionPaint = Paint()
           // Default setup, will be overridden in paint
           ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round,
-        _markerPaint = Paint()
-          ..style = PaintingStyle.fill
           ..strokeCap = StrokeCap.round;
 
   @override
@@ -116,15 +112,16 @@ class ConnectionPainter extends CustomPainter {
   void _drawMarker(
     Canvas canvas,
     Path path,
-    Color
-        baseColor, // No longer using strokeStyle here, marker has its own color
+    Color baseColor,
     FlowEdgeMarkerStyle markerStyle, {
     required bool atStart,
   }) {
-    // Get path metrics (only compute if needed)
-    // Use list + isEmpty check which is slightly safer than iterator
-    final metrics = path.computeMetrics(forceClosed: false).toList();
-    if (metrics.isEmpty) return;
+    // Get path metrics
+    final metrics = path.computeMetrics().toList();
+    if (metrics.isEmpty) {
+      // debugPrint('Path metrics are empty');
+      return;
+    }
 
     final metric = atStart ? metrics.first : metrics.last;
     final tangent = atStart
@@ -133,51 +130,43 @@ class ConnectionPainter extends CustomPainter {
 
     if (tangent == null) return;
 
-    // Resolve marker decoration based on its own properties (not edge state)
-    // Connection painter uses the base decoration from the marker style directly.
+    // Resolve marker decoration
     final resolvedMarkerDecoration = markerStyle.decoration;
 
-    // Configure marker paint based on resolved decoration
-    _markerPaint
+    // Configure marker paint locally to avoid state reuse issues
+    final paint = Paint()
       ..color = resolvedMarkerDecoration.color
       ..strokeWidth = resolvedMarkerDecoration.strokeWidth
-      ..style = markerStyle.type == EdgeMarkerType.arrowClosed ||
-              markerStyle.type == EdgeMarkerType.circle
-          ? PaintingStyle.fill
-          : PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
 
-    final size = resolvedMarkerDecoration
-        .size.width; // Assuming width/height are same for markers
+    final size = resolvedMarkerDecoration.size.width;
 
-    // If marker has a custom builder, use it
+    // Handle custom builder
     if (markerStyle.builder != null) {
-      // Ensure paint style is fill if builder expects it (common convention)
-      // Builder might override this, but setting a default helps.
-      _markerPaint.style = PaintingStyle.fill;
+      paint.style = PaintingStyle.fill;
       markerStyle.builder!(canvas, tangent, resolvedMarkerDecoration);
       return;
     }
 
-    // Draw built-in marker types
-    // Calculate angle correctly for start/end
+    // Calculate angle
     var angle = tangent.vector.direction;
-    if (atStart) angle += pi; // Reverse direction for start marker
+    if (atStart) angle += pi;
 
+    // Draw built-in marker types
     switch (markerStyle.type) {
       case EdgeMarkerType.arrow:
-        _drawDefaultArrow(canvas, tangent.position, angle, size, _markerPaint,
+        _drawDefaultArrow(canvas, tangent.position, angle, size, paint,
             close: false);
         break;
       case EdgeMarkerType.arrowClosed:
-        // Ensure fill style for closed arrow
-        _markerPaint.style = PaintingStyle.fill;
-        _drawDefaultArrow(canvas, tangent.position, angle, size, _markerPaint,
+        paint.style = PaintingStyle.fill;
+        _drawDefaultArrow(canvas, tangent.position, angle, size, paint,
             close: true);
         break;
       case EdgeMarkerType.circle:
-        // Ensure fill style for circle
-        _markerPaint.style = PaintingStyle.fill;
-        canvas.drawCircle(tangent.position, size / 2, _markerPaint);
+        paint.style = PaintingStyle.fill;
+        canvas.drawCircle(tangent.position, size / 2, paint);
         break;
       case EdgeMarkerType.none:
         break;

@@ -13,7 +13,10 @@ import 'package:flow_canvas/src/domain/state/edge_state.dart';
 import 'package:flow_canvas/src/domain/state/handle_state.dart';
 import 'package:flow_canvas/src/domain/state/viewport_state.dart';
 
+import 'package:flow_canvas/src/shared/json_converters.dart';
+
 part 'flow_canvas_state.freezed.dart';
+part 'flow_canvas_state.g.dart';
 
 @freezed
 abstract class FlowCanvasState with _$FlowCanvasState {
@@ -21,13 +24,19 @@ abstract class FlowCanvasState with _$FlowCanvasState {
 
   const factory FlowCanvasState({
     // Core graph data
-    @Default({}) Map<String, FlowNode> nodes,
+    @Default({}) @NodeMapConverter() Map<String, FlowNode> nodes,
     @Default({}) Map<String, FlowEdge> edges,
 
     // Runtime node/edge/handle states
-    @Default({}) Map<String, NodeRuntimeState> nodeStates,
-    @Default({}) Map<String, EdgeRuntimeState> edgeStates,
-    @Default({}) Map<String, HandleRuntimeState> handleStates,
+    @Default({})
+    @JsonKey(ignore: true)
+    Map<String, NodeRuntimeState> nodeStates,
+    @Default({})
+    @JsonKey(ignore: true)
+    Map<String, EdgeRuntimeState> edgeStates,
+    @Default({})
+    @JsonKey(ignore: true)
+    Map<String, HandleRuntimeState> handleStates,
 
     // Selection and z-ordering
     @Default({}) Set<String> selectedNodes,
@@ -35,24 +44,38 @@ abstract class FlowCanvasState with _$FlowCanvasState {
     @Default(0) int minZIndex,
     @Default(0) int maxZIndex,
 
-    // Spatial indexing
-    required NodeIndex nodeIndex,
-    required EdgeIndex edgeIndex,
+    // --- FIX START ---
+    // Make these nullable so .fromJson can instantiate the class without them.
+    // Since they are ignored in JSON, they will be null when loading from file.
+    @JsonKey(includeFromJson: false, includeToJson: false) NodeIndex? nodeIndex,
+    @JsonKey(includeFromJson: false, includeToJson: false) EdgeIndex? edgeIndex,
+    // --- FIX END ---
 
     // Viewport
     @Default(FlowViewport()) FlowViewport viewport,
-    Size? viewportSize,
+    @SizeConverter() Size? viewportSize,
     @Default(false) bool isPanZoomLocked,
 
     // Interaction state
-    @Default(DragMode.none) DragMode dragMode,
-    FlowConnection? activeConnection,
+    @Default(DragMode.none) @JsonKey(ignore: true) DragMode dragMode,
+    @JsonKey(ignore: true) FlowConnection? activeConnection,
     @Default(FlowConnectionRuntimeState.idle())
+    @JsonKey(ignore: true)
     FlowConnectionRuntimeState connectionState,
-    @Default(Rect.zero) Rect selectionRect,
-    @Default('') String hoveredEdgeId,
-    @Default('') String lastClickedEdgeId,
+    @Default(Rect.zero)
+    @RectConverter()
+    @JsonKey(ignore: true)
+    Rect selectionRect,
+    @Default('') @JsonKey(ignore: true) String hoveredEdgeId,
+    @Default('') @JsonKey(ignore: true) String lastClickedEdgeId,
   }) = _FlowCanvasState;
+
+  // Ideally, add this explicitly so the analyzer knows the method exists on the mixin
+  Map<String, dynamic> toJson() =>
+      throw UnimplementedError('toJson should be generated');
+
+  factory FlowCanvasState.fromJson(Map<String, dynamic> json) =>
+      _$FlowCanvasStateFromJson(json);
 
   factory FlowCanvasState.initial() => FlowCanvasState(
         nodeIndex: NodeIndex.empty(),

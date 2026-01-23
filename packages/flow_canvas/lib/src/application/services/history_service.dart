@@ -10,7 +10,7 @@ class HistoryService {
   // The maximum number of history states to keep.
   final int limit;
 
-  HistoryService({this.limit = 100});
+  HistoryService({this.limit = 50});
 
   /// The current state in the history.
   FlowCanvasState? get current =>
@@ -25,7 +25,7 @@ class HistoryService {
   /// Pushes a new state onto the history stack.
   void record(FlowCanvasState newState) {
     // If the new state is identical to the current one, do nothing.
-    if (_undoStack.isNotEmpty && identical(newState, _undoStack.last)) return;
+    if (_undoStack.isNotEmpty && newState == _undoStack.last) return;
 
     _undoStack.add(newState);
     _redoStack.clear(); // A new action clears the redo stack.

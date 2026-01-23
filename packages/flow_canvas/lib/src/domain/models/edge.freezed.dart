@@ -58,28 +58,33 @@ mixin _$FlowEdge {
   ///
   /// Typically a Text widget, but can be any widget. Positioned at the
   /// center of the edge path.
+  @JsonKey(ignore: true)
   Widget? get label;
 
   /// Optional decoration for the label container.
   ///
   /// Controls background, border, padding, etc. of the label.
   /// If null, uses default decoration or no decoration.
+  @JsonKey(ignore: true)
   FlowEdgeLabelStyle? get labelDecoration;
 
   /// Optional custom marker style for the start of the edge.
   ///
   /// Common options: arrow, circle, diamond. If null, no start marker.
+  @JsonKey(ignore: true)
   FlowEdgeMarkerStyle? get startMarkerStyle;
 
   /// Optional custom marker style for the end of the edge.
   ///
   /// Common options: arrow, circle, diamond. If null, no end marker.
+  @JsonKey(ignore: true)
   FlowEdgeMarkerStyle? get endMarkerStyle;
 
   /// Optional custom style for this edge.
   ///
   /// Controls stroke width, color, dash pattern, etc.
   /// If null, uses the style from the current theme.
+  @JsonKey(ignore: true)
   FlowEdgeStyle? get style;
 
   /// Custom data that can be attached to this edge.
@@ -131,6 +136,9 @@ mixin _$FlowEdge {
   $FlowEdgeCopyWith<FlowEdge> get copyWith =>
       _$FlowEdgeCopyWithImpl<FlowEdge>(this as FlowEdge, _$identity);
 
+  /// Serializes this FlowEdge to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -171,6 +179,7 @@ mixin _$FlowEdge {
                 other.elevateEdgeOnSelect == elevateEdgeOnSelect));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -216,11 +225,11 @@ abstract mixin class $FlowEdgeCopyWith<$Res> {
       int zIndex,
       EdgePathType type,
       double interactionWidth,
-      Widget? label,
-      FlowEdgeLabelStyle? labelDecoration,
-      FlowEdgeMarkerStyle? startMarkerStyle,
-      FlowEdgeMarkerStyle? endMarkerStyle,
-      FlowEdgeStyle? style,
+      @JsonKey(ignore: true) Widget? label,
+      @JsonKey(ignore: true) FlowEdgeLabelStyle? labelDecoration,
+      @JsonKey(ignore: true) FlowEdgeMarkerStyle? startMarkerStyle,
+      @JsonKey(ignore: true) FlowEdgeMarkerStyle? endMarkerStyle,
+      @JsonKey(ignore: true) FlowEdgeStyle? style,
       Map<String, dynamic> data,
       bool? hidden,
       bool? deletable,
@@ -450,11 +459,11 @@ extension FlowEdgePatterns on FlowEdge {
             int zIndex,
             EdgePathType type,
             double interactionWidth,
-            Widget? label,
-            FlowEdgeLabelStyle? labelDecoration,
-            FlowEdgeMarkerStyle? startMarkerStyle,
-            FlowEdgeMarkerStyle? endMarkerStyle,
-            FlowEdgeStyle? style,
+            @JsonKey(ignore: true) Widget? label,
+            @JsonKey(ignore: true) FlowEdgeLabelStyle? labelDecoration,
+            @JsonKey(ignore: true) FlowEdgeMarkerStyle? startMarkerStyle,
+            @JsonKey(ignore: true) FlowEdgeMarkerStyle? endMarkerStyle,
+            @JsonKey(ignore: true) FlowEdgeStyle? style,
             Map<String, dynamic> data,
             bool? hidden,
             bool? deletable,
@@ -518,11 +527,11 @@ extension FlowEdgePatterns on FlowEdge {
             int zIndex,
             EdgePathType type,
             double interactionWidth,
-            Widget? label,
-            FlowEdgeLabelStyle? labelDecoration,
-            FlowEdgeMarkerStyle? startMarkerStyle,
-            FlowEdgeMarkerStyle? endMarkerStyle,
-            FlowEdgeStyle? style,
+            @JsonKey(ignore: true) Widget? label,
+            @JsonKey(ignore: true) FlowEdgeLabelStyle? labelDecoration,
+            @JsonKey(ignore: true) FlowEdgeMarkerStyle? startMarkerStyle,
+            @JsonKey(ignore: true) FlowEdgeMarkerStyle? endMarkerStyle,
+            @JsonKey(ignore: true) FlowEdgeStyle? style,
             Map<String, dynamic> data,
             bool? hidden,
             bool? deletable,
@@ -584,11 +593,11 @@ extension FlowEdgePatterns on FlowEdge {
             int zIndex,
             EdgePathType type,
             double interactionWidth,
-            Widget? label,
-            FlowEdgeLabelStyle? labelDecoration,
-            FlowEdgeMarkerStyle? startMarkerStyle,
-            FlowEdgeMarkerStyle? endMarkerStyle,
-            FlowEdgeStyle? style,
+            @JsonKey(ignore: true) Widget? label,
+            @JsonKey(ignore: true) FlowEdgeLabelStyle? labelDecoration,
+            @JsonKey(ignore: true) FlowEdgeMarkerStyle? startMarkerStyle,
+            @JsonKey(ignore: true) FlowEdgeMarkerStyle? endMarkerStyle,
+            @JsonKey(ignore: true) FlowEdgeStyle? style,
             Map<String, dynamic> data,
             bool? hidden,
             bool? deletable,
@@ -629,7 +638,7 @@ extension FlowEdgePatterns on FlowEdge {
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _FlowEdge extends FlowEdge {
   const _FlowEdge(
       {required this.id,
@@ -640,11 +649,11 @@ class _FlowEdge extends FlowEdge {
       this.zIndex = 0,
       this.type = EdgePathType.bezier,
       this.interactionWidth = 10.0,
-      this.label,
-      this.labelDecoration,
-      this.startMarkerStyle,
-      this.endMarkerStyle,
-      this.style,
+      @JsonKey(ignore: true) this.label,
+      @JsonKey(ignore: true) this.labelDecoration,
+      @JsonKey(ignore: true) this.startMarkerStyle,
+      @JsonKey(ignore: true) this.endMarkerStyle,
+      @JsonKey(ignore: true) this.style,
       final Map<String, dynamic> data = const <String, dynamic>{},
       this.hidden,
       this.deletable,
@@ -656,6 +665,8 @@ class _FlowEdge extends FlowEdge {
             'Source and target cannot be the same node'),
         _data = data,
         super._();
+  factory _FlowEdge.fromJson(Map<String, dynamic> json) =>
+      _$FlowEdgeFromJson(json);
 
   /// Unique identifier for this edge.
   @override
@@ -713,6 +724,7 @@ class _FlowEdge extends FlowEdge {
   /// Typically a Text widget, but can be any widget. Positioned at the
   /// center of the edge path.
   @override
+  @JsonKey(ignore: true)
   final Widget? label;
 
   /// Optional decoration for the label container.
@@ -720,18 +732,21 @@ class _FlowEdge extends FlowEdge {
   /// Controls background, border, padding, etc. of the label.
   /// If null, uses default decoration or no decoration.
   @override
+  @JsonKey(ignore: true)
   final FlowEdgeLabelStyle? labelDecoration;
 
   /// Optional custom marker style for the start of the edge.
   ///
   /// Common options: arrow, circle, diamond. If null, no start marker.
   @override
+  @JsonKey(ignore: true)
   final FlowEdgeMarkerStyle? startMarkerStyle;
 
   /// Optional custom marker style for the end of the edge.
   ///
   /// Common options: arrow, circle, diamond. If null, no end marker.
   @override
+  @JsonKey(ignore: true)
   final FlowEdgeMarkerStyle? endMarkerStyle;
 
   /// Optional custom style for this edge.
@@ -739,6 +754,7 @@ class _FlowEdge extends FlowEdge {
   /// Controls stroke width, color, dash pattern, etc.
   /// If null, uses the style from the current theme.
   @override
+  @JsonKey(ignore: true)
   final FlowEdgeStyle? style;
 
   /// Custom data that can be attached to this edge.
@@ -811,6 +827,13 @@ class _FlowEdge extends FlowEdge {
       __$FlowEdgeCopyWithImpl<_FlowEdge>(this, _$identity);
 
   @override
+  Map<String, dynamic> toJson() {
+    return _$FlowEdgeToJson(
+      this,
+    );
+  }
+
+  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
@@ -850,6 +873,7 @@ class _FlowEdge extends FlowEdge {
                 other.elevateEdgeOnSelect == elevateEdgeOnSelect));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -897,11 +921,11 @@ abstract mixin class _$FlowEdgeCopyWith<$Res>
       int zIndex,
       EdgePathType type,
       double interactionWidth,
-      Widget? label,
-      FlowEdgeLabelStyle? labelDecoration,
-      FlowEdgeMarkerStyle? startMarkerStyle,
-      FlowEdgeMarkerStyle? endMarkerStyle,
-      FlowEdgeStyle? style,
+      @JsonKey(ignore: true) Widget? label,
+      @JsonKey(ignore: true) FlowEdgeLabelStyle? labelDecoration,
+      @JsonKey(ignore: true) FlowEdgeMarkerStyle? startMarkerStyle,
+      @JsonKey(ignore: true) FlowEdgeMarkerStyle? endMarkerStyle,
+      @JsonKey(ignore: true) FlowEdgeStyle? style,
       Map<String, dynamic> data,
       bool? hidden,
       bool? deletable,

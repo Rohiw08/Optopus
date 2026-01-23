@@ -20,14 +20,6 @@ import 'package:flow_canvas/src/application/services/node_service.dart';
 import 'package:flow_canvas/src/application/services/selection_service.dart';
 import 'package:flow_canvas/src/application/services/viewport_service.dart';
 import 'package:flow_canvas/src/application/services/z_index_service.dart';
-import 'package:flow_canvas/src/application/streams/connection_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/edge_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/edges_flow_state_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/node_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/nodes_flow_state_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/pane_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/selection_change_stream.dart';
-import 'package:flow_canvas/src/application/streams/viewport_change_stream.dart';
 import 'package:flow_canvas/src/domain/flow_canvas_state.dart';
 import 'package:flow_canvas/src/domain/state/viewport_state.dart';
 import 'package:flow_canvas/src/presentation/utility/canvas_coordinate_converter.dart';
@@ -100,42 +92,34 @@ class FlowCanvasInternalController extends StateNotifier<FlowCanvasState> {
     selection = SelectionController(
       controller: this,
       selectionService: _selectionService,
-      selectionStreams: _selectionStreams,
     );
     nodes = NodesController(
       controller: this,
       nodeService: _nodeService,
       edgeService: _edgeService,
-      nodeStreams: _nodeStreams,
-      nodesStateStreams: _nodesStateStreams,
       selectionController: selection,
     );
     edges = EdgesController(
         controller: this,
         edgeService: _edgeService,
         edgeGeometryService: edgeGeometryService,
-        edgeStreams: _edgeStreams,
-        edgesStateStreams: _edgesStateStreams,
         selectionController: selection);
     viewport = ViewportController(
       controller: this,
       viewportService: _viewportService,
       coordinateConverter: coordinateConverter,
-      viewportStreams: _viewportStreams,
     );
     connection = ConnectionController(
       controller: this,
       connectionService: _connectionService,
       coordinateConverter: coordinateConverter,
-      connectionStreams: _connectionStreams,
     );
     clipboard = ClipboardController(
-        controller: this,
-        clipboardService: _clipboardService,
-        nodeService: _nodeService,
-        edgeService: _edgeService,
-        nodesStateStreams: _nodesStateStreams,
-        edgesStateStreams: _edgesStateStreams);
+      controller: this,
+      clipboardService: _clipboardService,
+      nodeService: _nodeService,
+      edgeService: _edgeService,
+    );
     history = HistoryController(controller: this, history: _history);
     handle = HandleController(controller: this);
     edgeGeometry = EdgeGeometryController(
@@ -157,26 +141,6 @@ class FlowCanvasInternalController extends StateNotifier<FlowCanvasState> {
       _updateTransformationController();
     });
   }
-
-  // --- Streams ---
-  final NodeInteractionStreams _nodeStreams = NodeInteractionStreams();
-  final NodesStateStreams _nodesStateStreams = NodesStateStreams();
-  final EdgeInteractionStreams _edgeStreams = EdgeInteractionStreams();
-  final EdgesStateStreams _edgesStateStreams = EdgesStateStreams();
-  final ConnectionStreams _connectionStreams = ConnectionStreams();
-  final PaneStreams _paneStreams = PaneStreams();
-  final SelectionStreams _selectionStreams = SelectionStreams();
-  final ViewportStreams _viewportStreams = ViewportStreams();
-
-  // Public stream accessors
-  NodeInteractionStreams get nodeStreams => _nodeStreams;
-  NodesStateStreams get nodesStateStreams => _nodesStateStreams;
-  EdgeInteractionStreams get edgeStreams => _edgeStreams;
-  EdgesStateStreams get edgesStateStream => _edgesStateStreams;
-  ConnectionStreams get connectionStreams => _connectionStreams;
-  PaneStreams get paneStreams => _paneStreams;
-  SelectionStreams get selectionStreams => _selectionStreams;
-  ViewportStreams get viewportStreams => _viewportStreams;
 
   // =================================================================================
   // --- State Update & Private Helpers ---
@@ -233,14 +197,6 @@ class FlowCanvasInternalController extends StateNotifier<FlowCanvasState> {
   // --- Disposal ---
   @override
   void dispose() {
-    _nodeStreams.dispose();
-    _nodesStateStreams.dispose();
-    _edgeStreams.dispose();
-    _edgesStateStreams.dispose();
-    _connectionStreams.dispose();
-    _paneStreams.dispose();
-    _selectionStreams.dispose();
-    _viewportStreams.dispose();
     transformationController.removeListener(_onTransformationChanged);
     transformationController.dispose();
     super.dispose();

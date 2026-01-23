@@ -53,7 +53,7 @@ class EdgeGeometryService {
 
     // Collect all edges connected to the changed nodes
     for (final nodeId in nodeIds) {
-      edgesToUpdate.addAll(state.edgeIndex.getEdgesForNode(nodeId));
+      edgesToUpdate.addAll(state.edgeIndex!.getEdgesForNode(nodeId));
     }
     // Only update those specific edges
     for (final edgeId in edgesToUpdate) {
@@ -145,6 +145,11 @@ class EdgeGeometryService {
       final tolerance =
           ((state.edges[edgeId]?.interactionWidth ?? 10.0) / (2.0 * zoom))
               .clamp(baseTolerance, 64.0);
+
+      // Fast bounds check
+      if (!geom.bounds.inflate(tolerance).contains(localPos)) {
+        continue;
+      }
 
       if (_isPointNearSamples(geom.samples, localPos, tolerance)) {
         return edgeId;

@@ -1,10 +1,13 @@
 import 'dart:math' as math;
 import 'package:flow_canvas/src/domain/models/handle.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flow_canvas/src/shared/json_converters.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-part 'node.freezed.dart';
 
-@freezed
+part 'node.freezed.dart';
+part 'node.g.dart';
+
+@Freezed(genericArgumentFactories: true)
 abstract class FlowNode<T> with _$FlowNode<T> {
   const FlowNode._();
 
@@ -20,7 +23,7 @@ abstract class FlowNode<T> with _$FlowNode<T> {
     required String type,
 
     /// Position of the node's center in canvas coordinates.
-    required Offset position,
+    @OffsetConverter() required Offset position,
 
     /// Custom data attached to this node.
     ///
@@ -33,7 +36,7 @@ abstract class FlowNode<T> with _$FlowNode<T> {
     required T data,
 
     /// Size of the node in logical pixels.
-    @Default(Size(200, 100)) Size size,
+    @Default(Size(200, 100)) @SizeConverter() Size size,
 
     /// Z-index for rendering order (higher values render on top).
     @Default(0) int zIndex,
@@ -42,29 +45,33 @@ abstract class FlowNode<T> with _$FlowNode<T> {
     @Default({}) Map<String, FlowHandle> handles,
 
     /// Whether this node should be hidden from view.
-    bool? hidden,
+    @Default(false) bool? hidden,
 
     /// Whether this node can be dragged by the user.
-    bool? draggable,
+    @Default(true) bool? draggable,
 
     /// Whether this node can be selected by the user.
-    bool? selectable,
+    @Default(true) bool? selectable,
 
     /// Whether this node can be hovered by the user.
-    bool? hoverable,
+    @Default(true) bool? hoverable,
 
     /// Whether edges can be connected to/from this node.
-    bool? connectable,
+    @Default(true) bool? connectable,
 
     /// Whether this node can be deleted by the user.
-    bool? deletable,
+    @Default(true) bool? deletable,
 
     /// Whether this node can receive keyboard focus.
-    bool? focusable,
+    @Default(true) bool? focusable,
 
     /// Whether this node triggers an automatic expansion of its parent group.
     @Default(false) bool expandParent,
   }) = _FlowNode<T>;
+
+  factory FlowNode.fromJson(
+          Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
+      _$FlowNodeFromJson(json, fromJsonT);
 
   /// Custom factory method to create a FlowNode with common defaults,
   /// especially for converting a list of handles to a map.

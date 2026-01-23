@@ -1,24 +1,19 @@
-import 'package:flow_canvas/src/application/events/selection_change_event.dart';
 import 'package:flow_canvas/src/application/flow_canvas_internal_controller.dart';
 import 'package:flow_canvas/src/application/services/selection_service.dart';
-import 'package:flow_canvas/src/application/streams/selection_change_stream.dart';
 import 'package:flow_canvas/src/shared/enums.dart';
 import 'package:flutter/material.dart';
 
 class SelectionController {
   final FlowCanvasInternalController _controller;
   final SelectionService _selectionService;
-  final SelectionStreams _selectionStreams;
 
   // Assumes a SelectionController will be created and passed in
 
   SelectionController({
     required FlowCanvasInternalController controller,
     required SelectionService selectionService,
-    required SelectionStreams selectionStreams,
   })  : _controller = controller,
-        _selectionService = selectionService,
-        _selectionStreams = selectionStreams;
+        _selectionService = selectionService;
 
   Set<String> _getNodesInSelectionRect() {
     final rect = _controller.currentState.selectionRect;
@@ -26,60 +21,31 @@ class SelectionController {
     final cartesianRect =
         _controller.coordinateConverter.renderRectToCartesianRect(rect);
     final foundNodes =
-        _controller.currentState.nodeIndex.queryNodesInRect(cartesianRect);
+        _controller.currentState.nodeIndex!.queryNodesInRect(cartesianRect);
     return foundNodes;
   }
 
   void selectNode(String nodeId, {bool addToSelection = false}) {
-    final wasSelected = _controller.currentState.selectedNodes.contains(nodeId);
     _controller.updateStateOnly(
       _selectionService.toggleNodeSelection(_controller.currentState, nodeId,
           addToSelection: addToSelection),
     );
-    final isSelected = _controller.currentState.selectedNodes.contains(nodeId);
-    if (wasSelected != isSelected) {
-      _selectionStreams.emitEvent(SelectionChangeEvent(
-        selectedNodeIds: _controller.currentState.selectedNodes,
-        selectedEdgeIds: _controller.currentState.selectedEdges,
-        state: _controller.currentState,
-      ));
-    }
   }
 
   void selectEdge(String edgeId, {bool addToSelection = false}) {
-    final oldState = _controller.currentState;
     _controller.updateStateOnly(_selectionService.toggleEdgeSelection(
         _controller.currentState, edgeId,
         addToSelection: addToSelection));
-
-    if (oldState.selectedNodes != _controller.currentState.selectedNodes ||
-        oldState.selectedEdges != _controller.currentState.selectedEdges) {
-      _selectionStreams.emitEvent(SelectionChangeEvent(
-        selectedNodeIds: _controller.currentState.selectedNodes,
-        selectedEdgeIds: _controller.currentState.selectedEdges,
-        state: _controller.currentState,
-      ));
-    }
   }
 
   void deselectAll() {
     _controller.updateStateOnly(
         _selectionService.deselectAll(_controller.currentState));
-    _selectionStreams.emitEvent(SelectionChangeEvent(
-      selectedNodeIds: _controller.currentState.selectedNodes,
-      selectedEdgeIds: _controller.currentState.selectedEdges,
-      state: _controller.currentState,
-    ));
   }
 
   void selectAll() {
     _controller
         .updateStateOnly(_selectionService.selectAll(_controller.currentState));
-    _selectionStreams.emitEvent(SelectionChangeEvent(
-      selectedNodeIds: _controller.currentState.selectedNodes,
-      selectedEdgeIds: _controller.currentState.selectedEdges,
-      state: _controller.currentState,
-    ));
   }
 
   Offset? _selectionDragOrigin;
@@ -126,11 +92,5 @@ class SelectionController {
           selectedNodes: finalSelectedNodes,
           selectionRect: Rect.zero,
         ));
-
-    _selectionStreams.emitEvent(SelectionChangeEvent(
-      selectedNodeIds: _controller.currentState.selectedNodes,
-      selectedEdgeIds: _controller.currentState.selectedEdges,
-      state: _controller.currentState,
-    ));
   }
 }

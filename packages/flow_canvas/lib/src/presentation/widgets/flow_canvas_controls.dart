@@ -31,10 +31,10 @@ class FlowCanvasControls extends ConsumerWidget {
     this.showUndoRedo = true,
     this.orientation = Axis.vertical,
     this.alignment = Alignment.bottomLeft,
-    this.margin = const EdgeInsets.all(20),
-    this.padding = const EdgeInsets.all(20),
+    this.margin = const EdgeInsets.all(10),
+    this.padding = const EdgeInsets.all(10),
     this.children = const [],
-    this.spacing = 6.0,
+    this.spacing = 4.0,
     this.controlsStyle,
     this.size,
   });
