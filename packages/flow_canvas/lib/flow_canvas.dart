@@ -4,44 +4,59 @@
 /// controllers, data models, theming, and options.
 library;
 
-// --- Core ---
-export 'src/presentation/flow_canvas.dart';
-export 'src/application/flow_canvas_controller.dart';
+// --- Core Canvas ---
+export 'src/core/canvas/flow_canvas.dart';
+export 'src/core/canvas/flow_canvas_controller.dart';
 
-// --- Domain Models ---
-export 'src/domain/models/node.dart';
-export 'src/domain/models/edge.dart';
-export 'src/domain/models/handle.dart';
-export 'src/domain/models/connection.dart';
-export 'src/domain/models/coordinate_extent.dart';
+// --- Node Feature ---
+export 'src/features/nodes/domain/models/node.dart';
+export 'src/features/nodes/domain/node_registry.dart';
+export 'src/features/nodes/presentation/flow_node.dart';
 
-// --- Domain Registries ---
-export 'src/domain/registries/node_registry.dart';
-export 'src/domain/registries/edge_registry.dart';
+// --- Edge Feature ---
+export 'src/features/edges/domain/model/edge.dart';
+export 'src/features/edges/domain/edge_registry.dart';
+
+// --- Handle Feature ---
+export 'src/features/handles/domain/handle.dart';
+export 'src/features/handles/presentation/flow_handle.dart';
+
+// --- Connection Feature ---
+export 'src/features/connections/domain/models/connection.dart';
+
+// --- Viewport Feature ---
+export 'src/features/viewport/domain/coordinate_extent.dart';
+
+// --- Background Plugin ---
+export 'src/features/background/presentation/flow_background.dart';
+
+// --- Minimap Plugin ---
+export 'src/features/minimap/presentation/flow_minimap.dart';
+
+// --- Controls Plugin ---
+export 'src/features/control_panel/presentation/flow_canvas_controls.dart';
+export 'src/features/control_panel/presentation/control_button.dart';
+
+// --- Edge Label Widget ---
+export 'src/features/edge_labels/presentation/flow_edge_label.dart';
 
 // --- Theming ---
-export 'src/presentation/theme/theme_export.dart';
+export 'src/core/theme/theme_export.dart';
 
 // --- Options ---
-export 'src/presentation/options/flow_options.dart';
-export 'src/presentation/options/components/edge_options.dart';
-export 'src/presentation/options/components/fitview_options.dart';
-export 'src/presentation/options/components/keyboard_options.dart';
-export 'src/presentation/options/components/node_options.dart';
-export 'src/presentation/options/components/viewport_options.dart';
+export 'src/core/options/flow_options.dart';
+export 'src/core/options/components/edge_options.dart';
+export 'src/core/options/components/fitview_options.dart';
+export 'src/core/options/components/keyboard_options.dart';
+export 'src/core/options/components/node_options.dart';
+export 'src/core/options/components/viewport_options.dart';
 
 // --- Shared ---
-export 'src/shared/enums.dart';
-
-// --- Widgets ---
-export 'src/presentation/widgets/flow_canvas_controls.dart';
-export 'src/presentation/widgets/control_button.dart';
-export 'src/presentation/widgets/flow_minimap.dart';
-export 'src/presentation/widgets/flow_handle.dart';
-export 'src/presentation/widgets/layers/flow_background.dart';
-export 'src/presentation/widgets/flow_node.dart';
-export 'src/presentation/widgets/flow_edge_label.dart';
+export 'src/core/enums/enums.dart';
 
 // --- Utility ---
-export 'src/presentation/utility/flow_positioned.dart';
-export 'src/presentation/utility/random_id_generator.dart';
+export 'src/core/utils/flow_positioned.dart';
+export 'src/core/utils/random_id_generator.dart';
+
+// --- Examples ---
+export 'src/core/utils/coordinates/coordinates.dart';

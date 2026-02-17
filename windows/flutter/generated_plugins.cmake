@@ -3,6 +3,11 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  app_links
+  bitsdojo_window_windows
+  protocol_handler_windows
+  url_launcher_windows
+  windows_single_instance
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

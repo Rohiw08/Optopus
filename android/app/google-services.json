@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "649024799246",
+    "project_id": "optopus-7f070",
+    "storage_bucket": "optopus-7f070.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649024799246:android:d66d40c77e3b7b3a1c325f",
+        "android_client_info": {
+          "package_name": "com.example.optopus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649024799246-cmck2d80btjdrimosgoe860enb0h5h5g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4UhdIVNxV_-zbgbiGOq5rbqD0K1CJQNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649024799246-cmck2d80btjdrimosgoe860enb0h5h5g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

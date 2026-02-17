@@ -1,0 +1,99 @@
+import 'dart:ui';
+import 'package:flow_canvas/src/features/viewport/domain/viewport.dart';
+import 'package:flow_canvas/src/core/canvas/flow_canvas_internal_controller.dart';
+import 'package:flow_canvas/src/features/viewport/application/viewport_service.dart';
+import 'package:flow_canvas/src/core/options/components/fitview_options.dart';
+import 'package:flow_canvas/src/core/options/components/viewport_options.dart';
+import 'package:flow_canvas/src/core/utils/coordinates/canvas_coordinate_converter.dart';
+
+class ViewportController {
+  final FlowCanvasInternalController _controller;
+  final ViewportService _viewportService;
+  final CanvasCoordinateConverter _coordinateConverter;
+
+  ViewportController({
+    required FlowCanvasInternalController controller,
+    required ViewportService viewportService,
+    required CanvasCoordinateConverter coordinateConverter,
+  })  : _controller = controller,
+        _viewportService = viewportService,
+        _coordinateConverter = coordinateConverter;
+
+  void setViewportSize(Size size) {
+    final currentState = _controller.currentState;
+    if (currentState.viewportSize != size) {
+      _controller.updateStateOnly(currentState.copyWith(viewportSize: size));
+    }
+  }
+
+  void panBy(Offset delta) {
+    final newState = _viewportService.pan(_controller.currentState, delta);
+    _controller.updateStateOnly(newState);
+  }
+
+  void toggleLock() {
+    final currentState = _controller.currentState;
+    _controller.updateStateOnly(
+        currentState.copyWith(isPanZoomLocked: !currentState.isPanZoomLocked));
+  }
+
+  void zoom({
+    required Offset focalPoint,
+    required double minZoom,
+    required double maxZoom,
+    required double zoomFactor,
+  }) {
+    final newState = _viewportService.zoom(
+      _controller.currentState,
+      zoomFactor: 1 + zoomFactor,
+      focalPoint: focalPoint,
+      minZoom: minZoom,
+      maxZoom: maxZoom,
+    );
+    _controller.updateStateOnly(newState);
+  }
+
+  void fitView(
+      {FitViewOptions fitviewOptions = const FitViewOptions(),
+      ViewportOptions viewportOptions = const ViewportOptions()}) {
+    final newState = _viewportService.fitView(
+        state: _controller.currentState,
+        viewportOptions: viewportOptions,
+        fitViewOptions: fitviewOptions);
+    _controller.updateStateOnly(newState);
+  }
+
+  void centerOnPosition(Offset canvasPosition) {
+    final newState = _viewportService.centerOnPosition(
+      _controller.currentState,
+      canvasPosition,
+    );
+
+    _controller.updateStateOnly(newState);
+  }
+
+  void resetView() {
+    final newState =
+        _controller.currentState.copyWith(viewport: const FlowViewport());
+    _controller.updateStateOnly(newState);
+  }
+
+  Offset screenToCanvas(Offset screenPosition) =>
+      _viewportService.screenToCanvas(_controller.currentState, screenPosition);
+
+  Offset canvasToScreen(Offset canvasPosition) =>
+      _viewportService.canvasToScreen(_controller.currentState, canvasPosition);
+
+  Offset screenToCanvasPosition(Offset screenPosition) {
+    final renderPosition = _viewportService.screenToCanvas(
+        _controller.currentState, screenPosition);
+    return _coordinateConverter.toCartesianPosition(renderPosition);
+  }
+
+  Offset canvasToScreenPosition(Offset cartesianPosition) {
+    final renderPosition =
+        _coordinateConverter.toRenderPosition(cartesianPosition);
+    return _viewportService.canvasToScreen(
+        _controller.currentState, renderPosition);
+  }
+}

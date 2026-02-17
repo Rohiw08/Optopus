@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Classes\io.supabase.optopus]
+"URL Protocol"=""
+@="URL:Optopus Protocol"
+
+[HKEY_CURRENT_USER\Software\Classes\io.supabase.optopus\DefaultIcon]
+@="\"D:\\courses_and_projects\\Final Year Project\\optopus\\optopus\\build\\windows\\x64\\runner\\Debug\\optopus.exe\",0"
+
+[HKEY_CURRENT_USER\Software\Classes\io.supabase.optopus\shell]
+
+[HKEY_CURRENT_USER\Software\Classes\io.supabase.optopus\shell\open]
+
+[HKEY_CURRENT_USER\Software\Classes\io.supabase.optopus\shell\open\command]
+@="\"D:\\courses_and_projects\\Final Year Project\\optopus\\optopus\\build\\windows\\x64\\runner\\Debug\\optopus.exe\" \"%1\""
