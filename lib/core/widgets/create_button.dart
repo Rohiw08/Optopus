@@ -5,7 +5,7 @@ class CreateButton extends StatelessWidget {
   final double height;
   final double width;
   final String text;
-  final IconData icon;
+  final IconData? icon;
   final VoidCallback onPressed; // Callback function type (no arguments)
 
   const CreateButton({
@@ -13,7 +13,7 @@ class CreateButton extends StatelessWidget {
     required this.width,
     required this.text,
     required this.onPressed,
-    required this.icon,
+    this.icon,
     super.key,
   });
 

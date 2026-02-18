@@ -1,4 +1,6 @@
+import 'package:optopus/core/providers/auth_state_provider.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
+import 'package:optopus/features/workspace/presentation/controllers/workspace_ui_controller.dart';
 import 'package:optopus/features/workspace/providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -7,50 +9,57 @@ part 'workspace_list_controller.g.dart';
 @Riverpod(keepAlive: true)
 class WorkspaceListController extends _$WorkspaceListController {
   @override
-  Future<List<WorkspaceEntity>> build() {
-    return ref.read(workspaceServiceProvider).getUserWorkspaces();
-  }
+  Future<List<WorkspaceEntity>> build() async {
+    // Watch auth state to ensure we rebuild on login/logout
+    final authState = ref.watch(authStateProvider);
 
-  Future<WorkspaceEntity?> createWorkspace({
-    required String name,
-    String? description,
-  }) async {
-    state = const AsyncLoading();
-    WorkspaceEntity? createdWorkspace;
-    state = await AsyncValue.guard(() async {
-      createdWorkspace = await ref
-          .read(workspaceServiceProvider)
-          .createWorkspace(name: name, description: description);
-      return ref.read(workspaceServiceProvider).getUserWorkspaces();
-    });
-    return createdWorkspace;
-  }
+    final user = authState.value;
+    if (user == null) {
+      // If loading or error or unauthenticated, return empty list
+      return [];
+    }
 
-  Future<void> deleteWorkspace(String workspaceId) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await ref.read(workspaceServiceProvider).deleteWorkspace(workspaceId);
-      return ref.read(workspaceServiceProvider).getUserWorkspaces();
-    });
+    final searchQuery = ref.watch(workspaceSearchQueryProvider);
+    final sortStrategy = ref.watch(workspaceSortProvider);
+
+    List<WorkspaceEntity> workspaces;
+    if (searchQuery.trim().isEmpty) {
+      workspaces = await ref
+          .watch(workspaceServiceProvider)
+          .getUserWorkspacesWithStats();
+    } else {
+      workspaces = await ref
+          .watch(workspaceServiceProvider)
+          .searchWorkspaces(searchQuery);
+    }
+
+    // Apply Sorting
+    switch (sortStrategy) {
+      case WorkspaceSortStrategy.nameAz:
+        workspaces.sort(
+          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        );
+        break;
+      case WorkspaceSortStrategy.nameZa:
+        workspaces.sort(
+          (a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()),
+        );
+        break;
+      case WorkspaceSortStrategy.lastUpdated:
+        workspaces.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+        break;
+      case WorkspaceSortStrategy.createdNewest:
+        workspaces.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+    }
+
+    return workspaces;
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(workspaceServiceProvider).getUserWorkspaces(),
+      () => ref.read(workspaceServiceProvider).getUserWorkspacesWithStats(),
     );
-  }
-
-  Future<void> inviteMember({
-    required String workspaceId,
-    required String email,
-  }) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await ref
-          .read(workspaceServiceProvider)
-          .inviteMember(workspaceId: workspaceId, email: email);
-      return ref.read(workspaceServiceProvider).getUserWorkspaces();
-    });
   }
 }

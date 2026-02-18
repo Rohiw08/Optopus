@@ -3,7 +3,7 @@ import 'package:flow_canvas/flow_canvas.dart';
 import 'package:flutter/material.dart';
 import 'package:optopus/core/widgets/icon_button.dart';
 import 'package:optopus/core/widgets/sidebar_content_bar.dart';
-import 'package:optopus/features/workspace/subfeatures/flows/domain/entities/flow_entity.dart';
+import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
 import 'package:optopus/features/editor/presentation/controllers/editor_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

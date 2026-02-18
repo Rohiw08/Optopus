@@ -9,10 +9,10 @@ part of 'providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(emailAuthDataSource)
-final emailAuthDataSourceProvider = EmailAuthDataSourceProvider._();
+@ProviderFor(_emailAuthDataSource)
+final _emailAuthDataSourceProvider = _EmailAuthDataSourceProvider._();
 
-final class EmailAuthDataSourceProvider
+final class _EmailAuthDataSourceProvider
     extends
         $FunctionalProvider<
           EmailAuthDataSource,
@@ -20,19 +20,19 @@ final class EmailAuthDataSourceProvider
           EmailAuthDataSource
         >
     with $Provider<EmailAuthDataSource> {
-  EmailAuthDataSourceProvider._()
+  _EmailAuthDataSourceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'emailAuthDataSourceProvider',
+        name: r'_emailAuthDataSourceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$emailAuthDataSourceHash();
+  String debugGetCreateSourceHash() => _$_emailAuthDataSourceHash();
 
   @$internal
   @override
@@ -42,7 +42,7 @@ final class EmailAuthDataSourceProvider
 
   @override
   EmailAuthDataSource create(Ref ref) {
-    return emailAuthDataSource(ref);
+    return _emailAuthDataSource(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -54,13 +54,13 @@ final class EmailAuthDataSourceProvider
   }
 }
 
-String _$emailAuthDataSourceHash() =>
-    r'7d29380f460a15cfee6c4c170a4fde6dc80bd8db';
+String _$_emailAuthDataSourceHash() =>
+    r'd08be4d3036414c6628f03d31e6ec0dba49c9b78';
 
-@ProviderFor(googleAuthDataSource)
-final googleAuthDataSourceProvider = GoogleAuthDataSourceProvider._();
+@ProviderFor(_googleAuthDataSource)
+final _googleAuthDataSourceProvider = _GoogleAuthDataSourceProvider._();
 
-final class GoogleAuthDataSourceProvider
+final class _GoogleAuthDataSourceProvider
     extends
         $FunctionalProvider<
           GoogleAuthDataSource,
@@ -68,19 +68,19 @@ final class GoogleAuthDataSourceProvider
           GoogleAuthDataSource
         >
     with $Provider<GoogleAuthDataSource> {
-  GoogleAuthDataSourceProvider._()
+  _GoogleAuthDataSourceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'googleAuthDataSourceProvider',
+        name: r'_googleAuthDataSourceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$googleAuthDataSourceHash();
+  String debugGetCreateSourceHash() => _$_googleAuthDataSourceHash();
 
   @$internal
   @override
@@ -90,7 +90,7 @@ final class GoogleAuthDataSourceProvider
 
   @override
   GoogleAuthDataSource create(Ref ref) {
-    return googleAuthDataSource(ref);
+    return _googleAuthDataSource(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -102,28 +102,28 @@ final class GoogleAuthDataSourceProvider
   }
 }
 
-String _$googleAuthDataSourceHash() =>
-    r'1429874a5e728fb225a576382dc50c03a7259490';
+String _$_googleAuthDataSourceHash() =>
+    r'c35b14109a7c35a8f258e796c1ca0e9c56560859';
 
-@ProviderFor(authRepository)
-final authRepositoryProvider = AuthRepositoryProvider._();
+@ProviderFor(_authRepository)
+final _authRepositoryProvider = _AuthRepositoryProvider._();
 
-final class AuthRepositoryProvider
+final class _AuthRepositoryProvider
     extends $FunctionalProvider<AuthRepository, AuthRepository, AuthRepository>
     with $Provider<AuthRepository> {
-  AuthRepositoryProvider._()
+  _AuthRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'authRepositoryProvider',
+        name: r'_authRepositoryProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$authRepositoryHash();
+  String debugGetCreateSourceHash() => _$_authRepositoryHash();
 
   @$internal
   @override
@@ -132,7 +132,7 @@ final class AuthRepositoryProvider
 
   @override
   AuthRepository create(Ref ref) {
-    return authRepository(ref);
+    return _authRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -144,7 +144,7 @@ final class AuthRepositoryProvider
   }
 }
 
-String _$authRepositoryHash() => r'ec7955b7942c079571c454c4ce1a5af8f147946f';
+String _$_authRepositoryHash() => r'f1a81a3bb5e66f12bf26f26bb748039040bc34f4';
 
 @ProviderFor(authService)
 final authServiceProvider = AuthServiceProvider._();
@@ -185,4 +185,4 @@ final class AuthServiceProvider
   }
 }
 
-String _$authServiceHash() => r'198a0028c77fd366d55fd82a73db80ff6f156466';
+String _$authServiceHash() => r'e65c0f338cae4c679e488493566c6c36c3ea963d';

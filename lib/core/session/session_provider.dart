@@ -9,24 +9,44 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'session_provider.g.dart';
 
 @riverpod
+SessionRemoteDataSource _sessionRemoteDataSource(Ref ref) {
+  final client = ref.watch(supabaseClientProvider);
+  return SessionRemoteDataSource(client);
+}
+
+@riverpod
 SessionService _sessionService(Ref ref) {
-  final remoteSource = SessionRemoteDataSource(
-    ref.watch(supabaseClientProvider),
-  );
+  final remoteSource = ref.watch(_sessionRemoteDataSourceProvider);
   final repo = SessionRepositoryImpl(remoteSource);
   return SessionService(repo);
 }
 
 @riverpod
 Stream<AccountEntity?> session(Ref ref) {
-  final uid = ref.watch(authStateProvider).value?.id;
+  final authState = ref.watch(authStateProvider);
 
-  if (uid == null) return Stream.value(null);
+  return authState.when(
+    data: (user) {
+      if (user == null) return Stream.value(null);
 
+      final service = ref.watch(_sessionServiceProvider);
+      return service.watchAccount(user.id).map((result) {
+        return result.fold((failure) {
+          return null;
+        }, (profile) => profile);
+      });
+    },
+    loading: () => const Stream.empty(),
+    error: (err, stack) {
+      return Stream.value(null);
+    },
+  );
+}
+
+@riverpod
+Stream<AccountEntity?> profile(Ref ref, String userId) {
   final service = ref.watch(_sessionServiceProvider);
-  return service.watchAccount(uid).map((result) {
-    return result.fold((failure) {
-      return null;
-    }, (profile) => profile);
+  return service.watchAccount(userId).map((result) {
+    return result.fold((failure) => null, (profile) => profile);
   });
 }

@@ -5,13 +5,14 @@ import 'package:optopus/core/responsive/layouts/mobile_layout.dart';
 import 'package:optopus/core/responsive/layouts/tab_layout.dart';
 import 'package:optopus/core/responsive/responsive.dart';
 import 'package:optopus/core/widgets/animation_wrapper.dart';
-import 'package:optopus/features/home/presentation/widgets/app_bar.dart';
-import 'package:optopus/features/workspace/presentation/controllers/active_workspace_view_controller.dart';
-import 'package:optopus/features/workspace/presentation/widgets/main_widgets/create_workspace_image_holder_widget.dart';
-import 'package:optopus/features/workspace/presentation/widgets/main_widgets/create_workspace_widget.dart';
-import 'package:optopus/features/workspace/presentation/widgets/main_widgets/workspace_options_selections_widget.dart';
+import 'package:optopus/app/presentation/app_bar.dart';
+import 'package:optopus/features/workspace/presentation/states/active_workspace_view_controller.dart';
+import 'package:optopus/features/workspace/presentation/sections/all_workspaces_section.dart';
+import 'package:optopus/features/workspace/presentation/sections/create_workspace_section.dart';
+import 'package:optopus/features/workspace/presentation/sections/workspace_options_selections_section.dart';
 import 'package:go_router/go_router.dart';
 import 'package:optopus/features/home/presentation/controllers/home_view_controller.dart';
+import 'package:optopus/features/workspace/domain/providers/workspace_templates_provider.dart';
 
 class CreateWorkspaceScreen extends ConsumerWidget {
   const CreateWorkspaceScreen({super.key});
@@ -19,6 +20,7 @@ class CreateWorkspaceScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(workspaceViewProvider);
+    final workspaceTemplates = ref.watch(workspaceTemplatesProvider);
 
     return Scaffold(
       appBar: const AppBarWidget(),
@@ -28,8 +30,10 @@ class CreateWorkspaceScreen extends ConsumerWidget {
             index: view,
             direction: Direction.leftToRight,
             widgets: [
-              WorkspaceOptionsSelectionsWidget(),
-              CreateWorkspaceWidget(
+              WorkspaceOptionsSelectionsSection(
+                workspaceTemplates: workspaceTemplates,
+              ),
+              CreateWorkspaceSection(
                 onSuccess: (workspace) {
                   if (workspace != null) {
                     ref
@@ -50,8 +54,10 @@ class CreateWorkspaceScreen extends ConsumerWidget {
                 index: view,
                 direction: Direction.leftToRight,
                 widgets: [
-                  WorkspaceOptionsSelectionsWidget(),
-                  CreateWorkspaceWidget(
+                  WorkspaceOptionsSelectionsSection(
+                    workspaceTemplates: workspaceTemplates,
+                  ),
+                  CreateWorkspaceSection(
                     onSuccess: (workspace) {
                       if (workspace != null) {
                         ref
@@ -63,7 +69,7 @@ class CreateWorkspaceScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              Expanded(child: CreateWorkspaceImageHolderWidget()),
+              Expanded(child: AllWorkspacesSection()),
             ],
           ),
         ),
@@ -75,8 +81,10 @@ class CreateWorkspaceScreen extends ConsumerWidget {
                 index: view,
                 direction: Direction.leftToRight,
                 widgets: [
-                  WorkspaceOptionsSelectionsWidget(),
-                  CreateWorkspaceWidget(
+                  WorkspaceOptionsSelectionsSection(
+                    workspaceTemplates: workspaceTemplates,
+                  ),
+                  CreateWorkspaceSection(
                     onSuccess: (workspace) {
                       if (workspace != null) {
                         ref
@@ -88,7 +96,7 @@ class CreateWorkspaceScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              Expanded(child: CreateWorkspaceImageHolderWidget()),
+              Expanded(child: AllWorkspacesSection()),
             ],
           ),
         ),

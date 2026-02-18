@@ -9,10 +9,11 @@ part of 'providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(workspaceRemoteDataSource)
-final workspaceRemoteDataSourceProvider = WorkspaceRemoteDataSourceProvider._();
+@ProviderFor(_workspaceRemoteDataSource)
+final _workspaceRemoteDataSourceProvider =
+    _WorkspaceRemoteDataSourceProvider._();
 
-final class WorkspaceRemoteDataSourceProvider
+final class _WorkspaceRemoteDataSourceProvider
     extends
         $FunctionalProvider<
           WorkspaceRemoteDataSource,
@@ -20,19 +21,19 @@ final class WorkspaceRemoteDataSourceProvider
           WorkspaceRemoteDataSource
         >
     with $Provider<WorkspaceRemoteDataSource> {
-  WorkspaceRemoteDataSourceProvider._()
+  _WorkspaceRemoteDataSourceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'workspaceRemoteDataSourceProvider',
+        name: r'_workspaceRemoteDataSourceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$workspaceRemoteDataSourceHash();
+  String debugGetCreateSourceHash() => _$_workspaceRemoteDataSourceHash();
 
   @$internal
   @override
@@ -42,7 +43,7 @@ final class WorkspaceRemoteDataSourceProvider
 
   @override
   WorkspaceRemoteDataSource create(Ref ref) {
-    return workspaceRemoteDataSource(ref);
+    return _workspaceRemoteDataSource(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -54,13 +55,13 @@ final class WorkspaceRemoteDataSourceProvider
   }
 }
 
-String _$workspaceRemoteDataSourceHash() =>
-    r'2fc37a88bfc7e0daf895f0b60f332b92643f484f';
+String _$_workspaceRemoteDataSourceHash() =>
+    r'4833faa7180fcfb8f633788844d4cf3b6481c0ef';
 
-@ProviderFor(workspaceRepository)
-final workspaceRepositoryProvider = WorkspaceRepositoryProvider._();
+@ProviderFor(_workspaceRepository)
+final _workspaceRepositoryProvider = _WorkspaceRepositoryProvider._();
 
-final class WorkspaceRepositoryProvider
+final class _WorkspaceRepositoryProvider
     extends
         $FunctionalProvider<
           WorkspaceRepository,
@@ -68,19 +69,19 @@ final class WorkspaceRepositoryProvider
           WorkspaceRepository
         >
     with $Provider<WorkspaceRepository> {
-  WorkspaceRepositoryProvider._()
+  _WorkspaceRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'workspaceRepositoryProvider',
+        name: r'_workspaceRepositoryProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$workspaceRepositoryHash();
+  String debugGetCreateSourceHash() => _$_workspaceRepositoryHash();
 
   @$internal
   @override
@@ -90,7 +91,7 @@ final class WorkspaceRepositoryProvider
 
   @override
   WorkspaceRepository create(Ref ref) {
-    return workspaceRepository(ref);
+    return _workspaceRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -102,8 +103,8 @@ final class WorkspaceRepositoryProvider
   }
 }
 
-String _$workspaceRepositoryHash() =>
-    r'2f906d0ada23c82cf138ab94ca147290a36d3c30';
+String _$_workspaceRepositoryHash() =>
+    r'ffb10647410e300ce45cb4fd0063f4c963301726';
 
 @ProviderFor(workspaceService)
 final workspaceServiceProvider = WorkspaceServiceProvider._();
@@ -149,4 +150,4 @@ final class WorkspaceServiceProvider
   }
 }
 
-String _$workspaceServiceHash() => r'460068187004d7d24ecec7b111684d464fc536c1';
+String _$workspaceServiceHash() => r'ccdd1ef5f07852042cbd1d733f069171a405bea4';

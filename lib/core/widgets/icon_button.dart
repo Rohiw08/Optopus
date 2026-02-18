@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CustomIconButton extends StatelessWidget {
   const CustomIconButton({
     super.key,
-    required this.onPressed,
+    this.onPressed,
     required this.icon,
     required this.size,
     this.tooltip = "",
   });
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final IconData icon;
   final double size;
   final String tooltip;

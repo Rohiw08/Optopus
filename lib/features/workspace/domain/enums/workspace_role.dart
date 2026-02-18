@@ -4,5 +4,5 @@ enum WorkspaceRole {
   viewer;
 
   bool get canEdit => this == admin || this == editor;
-  bool get canManage => this == admin;
+  bool get isAdmin => this == admin;
 }

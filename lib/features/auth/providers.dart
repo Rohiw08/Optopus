@@ -9,24 +9,24 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'providers.g.dart';
 
 @riverpod
-EmailAuthDataSource emailAuthDataSource(Ref ref) {
+EmailAuthDataSource _emailAuthDataSource(Ref ref) {
   return EmailAuthDataSource(ref.read(supabaseClientProvider));
 }
 
 @riverpod
-GoogleAuthDataSource googleAuthDataSource(Ref ref) {
+GoogleAuthDataSource _googleAuthDataSource(Ref ref) {
   return GoogleAuthDataSource(ref.read(supabaseClientProvider));
 }
 
 @riverpod
-AuthRepository authRepository(Ref ref) {
+AuthRepository _authRepository(Ref ref) {
   return AuthRepositoryImpl(
-    email: ref.read(emailAuthDataSourceProvider),
-    google: ref.read(googleAuthDataSourceProvider),
+    email: ref.read(_emailAuthDataSourceProvider),
+    google: ref.read(_googleAuthDataSourceProvider),
   );
 }
 
 @riverpod
 AuthService authService(Ref ref) {
-  return AuthService(ref.read(authRepositoryProvider));
+  return AuthService(ref.read(_authRepositoryProvider));
 }

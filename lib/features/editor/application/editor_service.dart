@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:optopus/core/domain/failures/failure.dart';
 import 'package:optopus/features/editor/domain/repositories/editor_repository.dart';
-import 'package:optopus/features/workspace/subfeatures/flows/domain/repositories/flow_repository.dart';
+import 'package:optopus/features/flows/domain/repositories/flow_repository.dart';
 
 class EditorService {
   final EditorRepository _editorRepository;

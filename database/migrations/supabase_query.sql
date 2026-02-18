@@ -1,10 +1,4 @@
--- ============================================================================
--- Optopus Consolidated Migration
--- Order: Functions -> Tables -> RLS Policies -> Helper Functions -> Views
--- ============================================================================
-
 -- 1. GLOBAL HELPER FUNCTIONS
--- Required for automatic 'updated_at' timestamps across all tables
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -21,20 +15,27 @@ BEGIN
     END IF;
 END $$;
 
--- 3. TABLES DEFINITION (No RLS Policies yet to avoid circular dependencies)
-
--- Table: profiles (Merged from accounts/profiles logic)
+-- 3. TABLES DEFINITION
+-- Profiles: Expanded with Postman-style social/bio fields
 CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    username TEXT UNIQUE,
+    email TEXT UNIQUE,
     full_name TEXT,
     avatar_url TEXT,
+    bio TEXT,
+    website TEXT,
+    location TEXT,
+    twitter_handle TEXT,
+    github_handle TEXT,
     role TEXT DEFAULT 'user',
     preferences JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT username_length CHECK (char_length(username) >= 3)
 );
 
--- Table: workspaces
+-- Workspaces
 CREATE TABLE IF NOT EXISTS public.workspaces (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL CHECK (char_length(name) > 0 AND char_length(name) <= 255),
@@ -44,7 +45,7 @@ CREATE TABLE IF NOT EXISTS public.workspaces (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Table: workspace_members
+-- Workspace Members
 CREATE TABLE IF NOT EXISTS public.workspace_members (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS public.workspace_members (
     UNIQUE(workspace_id, user_id)
 );
 
--- Table: collections
+-- Collections
 CREATE TABLE IF NOT EXISTS public.collections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
@@ -66,7 +67,7 @@ CREATE TABLE IF NOT EXISTS public.collections (
     CHECK (parent_id IS NULL OR parent_id != id)
 );
 
--- Table: flows
+-- Flows
 CREATE TABLE IF NOT EXISTS public.flows (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     collection_id UUID NOT NULL REFERENCES public.collections(id) ON DELETE CASCADE,
@@ -82,7 +83,7 @@ CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace_id ON public.workspac
 CREATE INDEX IF NOT EXISTS idx_flows_collection_id ON public.flows(collection_id);
 CREATE INDEX IF NOT EXISTS idx_flows_data_gin ON public.flows USING gin(data);
 
--- 5. ROW LEVEL SECURITY (RLS) POLICIES
+-- 5. ROW LEVEL SECURITY (RLS)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workspaces ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workspace_members ENABLE ROW LEVEL SECURITY;
@@ -93,7 +94,7 @@ ALTER TABLE public.flows ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view all profiles" ON public.profiles FOR SELECT USING (auth.uid() IS NOT NULL);
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (id = auth.uid());
 
--- Workspace Policies (The fix for the circular dependency error)
+-- Workspace Policies
 CREATE POLICY "Users can view their workspaces" ON public.workspaces
     FOR SELECT USING (
         owner_id = auth.uid() OR 
@@ -124,21 +125,26 @@ CREATE POLICY "Users can view flows" ON public.flows
     );
 
 -- 6. TRIGGERS
--- Automatic Profile Creation on Signup
+-- Auto Profile Creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.profiles (id, full_name, avatar_url)
+    INSERT INTO public.profiles (id, username, email, full_name, avatar_url, bio)
     VALUES (
         NEW.id,
-        COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
-        COALESCE(NEW.raw_user_meta_data->>'avatar_url', 'https://ui-avatars.com/api/?name=' || NEW.id)
+        COALESCE(NEW.raw_user_meta_data->>'user_name', NEW.raw_user_meta_data->>'preferred_username', split_part(NEW.email, '@', 1) || floor(random() * 1000)::text),
+        NEW.email,
+        COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
+        COALESCE(NEW.raw_user_meta_data->>'avatar_url', NEW.raw_user_meta_data->>'picture', 'https://ui-avatars.com/api/?name=' || NEW.id),
+        'Hello! I am new here.'
     );
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE TRIGGER on_auth_user_created
+-- Re-bind trigger
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
@@ -148,16 +154,20 @@ CREATE TRIGGER update_workspaces_updated_at BEFORE UPDATE ON public.workspaces F
 CREATE TRIGGER update_collections_updated_at BEFORE UPDATE ON public.collections FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 CREATE TRIGGER update_flows_updated_at BEFORE UPDATE ON public.flows FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
--- 7. VIEWS & HELPER FUNCTIONS
-CREATE OR REPLACE VIEW public.workspaces_with_stats AS
+-- 7. VIEWS (Fixed with security_invoker)
+DROP VIEW IF EXISTS public.workspaces_with_stats;
+CREATE VIEW public.workspaces_with_stats 
+WITH (security_invoker = true)
+AS
 SELECT 
     w.*,
     (SELECT COUNT(*) FROM public.workspace_members WHERE workspace_id = w.id) as member_count,
     (SELECT COUNT(*) FROM public.collections WHERE workspace_id = w.id) as collection_count
 FROM public.workspaces w;
 
+-- 8. HELPER FUNCTIONS
 CREATE OR REPLACE FUNCTION public.get_user_workspaces(user_uuid UUID)
-RETURNS TABLE (id UUID, name TEXT, role TEXT) AS $$
+RETURNS TABLE (workspace_id UUID, workspace_name TEXT, member_role TEXT) AS $$
 BEGIN
     RETURN QUERY
     SELECT w.id, w.name, 
@@ -165,5 +175,32 @@ BEGIN
     FROM public.workspaces w
     LEFT JOIN public.workspace_members wm ON wm.workspace_id = w.id AND wm.user_id = user_uuid
     WHERE w.owner_id = user_uuid OR wm.user_id = user_uuid;
+END;
+$$ LANGUAGE plpgsql SECURITY INVOKER;
+
+-- 9. SECURITY DEFINER FUNCTIONS (Bypass RLS safely)
+DROP FUNCTION IF EXISTS public.add_workspace_member(UUID, UUID, public.workspace_role);
+
+CREATE OR REPLACE FUNCTION public.add_workspace_member(
+    ws_id UUID,
+    member_id UUID,
+    member_role public.workspace_role
+)
+RETURNS void AS $$
+BEGIN
+    -- Check if the executor is the owner of the workspace
+    IF NOT EXISTS (SELECT 1 FROM public.workspaces WHERE id = ws_id AND owner_id = auth.uid()) THEN
+        RAISE EXCEPTION 'Only workspace owners can invite members';
+    END IF;
+
+    -- Prevent inviting yourself
+    IF member_id = auth.uid() THEN
+        RAISE EXCEPTION 'You cannot invite yourself to your own workspace';
+    END IF;
+
+    INSERT INTO public.workspace_members (workspace_id, user_id, role)
+    VALUES (ws_id, member_id, member_role)
+    ON CONFLICT (workspace_id, user_id) DO UPDATE
+    SET role = EXCLUDED.role;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

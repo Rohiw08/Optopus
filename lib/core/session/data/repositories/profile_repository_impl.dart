@@ -22,6 +22,11 @@ class SessionRepositoryImpl implements SessionRepository {
           if (error is AuthException) {
             return Left(SessionNetworkFailure(error.message));
           }
+          if (error is PostgrestException) {
+            return Left(
+              SessionNetworkFailure('Database error: ${error.message}'),
+            );
+          }
           return Left(SessionUnknownFailure(error.toString()));
         });
   }

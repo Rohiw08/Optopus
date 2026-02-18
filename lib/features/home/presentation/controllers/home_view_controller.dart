@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
-import 'package:optopus/features/workspace/subfeatures/flows/domain/entities/flow_entity.dart';
+import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
 import 'package:optopus/features/home/presentation/providers/home_providers.dart';
 import 'package:optopus/core/domain/failures/failure.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

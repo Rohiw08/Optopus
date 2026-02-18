@@ -24,7 +24,7 @@ final class MemberListControllerProvider
   }) : super(
          retry: null,
          name: r'memberListControllerProvider',
-         isAutoDispose: true,
+         isAutoDispose: false,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
@@ -55,7 +55,7 @@ final class MemberListControllerProvider
 }
 
 String _$memberListControllerHash() =>
-    r'61e213580e17611c373e212b21fedb0ae19254e8';
+    r'e30e0694d45451ca8ab5602eb78e8de6df477a32';
 
 final class MemberListControllerFamily extends $Family
     with
@@ -72,7 +72,7 @@ final class MemberListControllerFamily extends $Family
         name: r'memberListControllerProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
-        isAutoDispose: true,
+        isAutoDispose: false,
       );
 
   MemberListControllerProvider call(String workspaceId) =>

@@ -1,5 +1,4 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:collection/collection.dart';
 
 class SessionRemoteDataSource {
   final SupabaseClient _supabase;
@@ -10,9 +9,9 @@ class SessionRemoteDataSource {
         .from('profiles')
         .stream(primaryKey: ['id'])
         .eq('id', uid)
-        .map((data) => data.isEmpty ? null : data.first)
-        .distinct(
-          (prev, next) => const DeepCollectionEquality().equals(prev, next),
-        );
+        .map((data) {
+          final result = data.isEmpty ? null : data.first;
+          return result;
+        });
   }
 }

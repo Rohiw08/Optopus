@@ -1,25 +1,15 @@
+import 'package:optopus/core/models/account_entity.dart';
 import 'package:optopus/features/workspace/domain/enums/workspace_role.dart';
 
-class WorkspaceMemberEntity {
-  final String id;
-  final String workspaceId;
-  final String userId;
-  final WorkspaceRole role;
-  final DateTime joinedAt;
+abstract class WorkspaceMemberEntity {
+  const WorkspaceMemberEntity();
 
-  // Denormalized fields from profiles join (for display)
-  final String? fullName;
-  final String? avatarUrl;
-  final String? email;
+  String get id;
+  String get workspaceId;
+  String get userId;
+  WorkspaceRole get role;
+  DateTime get joinedAt;
 
-  const WorkspaceMemberEntity({
-    required this.id,
-    required this.workspaceId,
-    required this.userId,
-    required this.role,
-    required this.joinedAt,
-    this.fullName,
-    this.avatarUrl,
-    this.email,
-  });
+  // Normalized profile data
+  AccountEntity? get profile;
 }

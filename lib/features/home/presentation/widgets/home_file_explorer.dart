@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:optopus/features/home/presentation/controllers/home_view_controller.dart';
 import 'package:optopus/features/workspace/presentation/controllers/workspace_list_controller.dart';
-import 'package:optopus/features/workspace/presentation/widgets/main_widgets/create_workspace_widget.dart';
+import 'package:optopus/features/workspace/presentation/sections/create_workspace_section.dart';
 import 'package:optopus/core/widgets/create_button.dart';
 import 'package:optopus/core/widgets/search_bar.dart';
 import 'package:optopus/core/widgets/sidebar_content_bar.dart';
@@ -49,17 +49,30 @@ class HomeFileExplorer extends ConsumerWidget {
                     builder: (context) => Center(
                       child: Material(
                         type: MaterialType.transparency,
-                        child: CreateWorkspaceWidget(
-                          onCancel: () => Navigator.pop(context),
-                          onSuccess: (workspace) {
-                            Navigator.pop(context);
-                            if (workspace != null) {
-                              ref
-                                  .read(homeViewControllerProvider.notifier)
-                                  .openWorkspace(workspace);
-                            }
-                          },
+                        child: Center(
+                          child: CreateWorkspaceSection(
+                            onCancel: () => Navigator.pop(context),
+                            onSuccess: (workspace) {
+                              Navigator.pop(context);
+                              if (workspace != null) {
+                                ref
+                                    .read(homeViewControllerProvider.notifier)
+                                    .openWorkspace(workspace);
+                              }
+                            },
+                          ),
                         ),
+                        // CreateWorkspaceWidget(
+                        //   onCancel: () => Navigator.pop(context),
+                        //   onSuccess: (workspace) {
+                        //     Navigator.pop(context);
+                        //     if (workspace != null) {
+                        //       ref
+                        //           .read(homeViewControllerProvider.notifier)
+                        //           .openWorkspace(workspace);
+                        //     }
+                        //   },
+                        // ),
                       ),
                     ),
                   );

@@ -4,6 +4,7 @@ import 'package:optopus/features/auth/domain/enums/auth_mode_enum.dart';
 import 'package:optopus/features/auth/domain/inputs/auth_method.dart';
 import 'package:optopus/features/auth/domain/state/auth_state.dart';
 import 'package:optopus/features/auth/providers.dart';
+import 'package:optopus/features/workspace/presentation/controllers/workspace_list_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.g.dart';
@@ -84,6 +85,10 @@ class AuthController extends _$AuthController {
     state = const AuthLoading(AuthAction.signOut);
     try {
       await ref.read(authServiceProvider).perform(AuthAction.signOut);
+
+      // Invalidate workspace list and other session-dependent providers
+      ref.invalidate(workspaceListControllerProvider);
+
       state = const AuthSuccess();
     } on AuthFailure catch (e) {
       state = AuthError(e);

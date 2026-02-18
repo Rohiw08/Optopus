@@ -1,9 +1,9 @@
 import 'package:optopus/core/domain/failures/failure.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
-import 'package:optopus/features/workspace/subfeatures/collections/domain/entities/collection_entity.dart';
-import 'package:optopus/features/workspace/subfeatures/flows/domain/entities/flow_entity.dart';
-import 'package:optopus/features/workspace/subfeatures/collections/application/collection_service.dart';
-import 'package:optopus/features/workspace/subfeatures/flows/application/flow_service.dart';
+import 'package:optopus/features/collections/domain/entities/collection_entity.dart';
+import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
+import 'package:optopus/features/collections/application/collection_service.dart';
+import 'package:optopus/features/flows/application/flow_service.dart';
 
 /// Service layer for Home feature
 /// Handles business logic for workspace navigation and opening

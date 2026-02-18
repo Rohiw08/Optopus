@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:optopus/features/home/presentation/controllers/home_view_controller.dart';
-import 'package:optopus/features/home/presentation/widgets/app_bar.dart';
-import 'package:optopus/features/workspace/presentation/screens/workspace_dashboard_screen.dart';
+import 'package:optopus/app/presentation/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flow_canvas/flow_canvas.dart';
 import 'package:optopus/features/editor/presentation/screens/editor_screen.dart';
@@ -10,14 +9,14 @@ import 'package:optopus/features/home/presentation/widgets/home_file_explorer.da
 import 'package:optopus/features/editor/presentation/widgets/editor_right_actions.dart';
 import 'package:optopus/features/editor/presentation/widgets/editor_node_library.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+class MainScreen extends ConsumerStatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _MainScreenState extends ConsumerState<MainScreen> {
   final FlowCanvasController _controller = FlowCanvasController();
   double _leftSidebarWidth = 220.0;
   double _rightSidebarWidth = 45.0;
@@ -60,7 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   empty: () =>
                       const Center(child: Text("Select a workspace or flow")),
                   dashboard: (workspace) =>
-                      WorkspaceDashboardScreen(workspace: workspace),
+                      const Center(child: Text("Dashboard")),
                   editor: (flow) => EditorScreen(
                     controller: _controller,
                   ), // TODO: Pass flow data to controller

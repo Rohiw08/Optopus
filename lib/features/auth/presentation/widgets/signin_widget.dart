@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:optopus/features/auth/domain/enums/auth_mode_enum.dart';
 import 'package:optopus/features/auth/domain/state/auth_state.dart';
 import 'package:optopus/features/auth/presentation/controller/auth_controller.dart';
-import 'package:optopus/features/auth/presentation/widgets/shared/auth_richtext.dart';
+import 'package:optopus/core/widgets/redirect_text.dart';
 import 'package:optopus/core/widgets/custom_textfield_widget.dart';
 import 'package:optopus/features/auth/presentation/controller/auth_view_provider.dart';
 

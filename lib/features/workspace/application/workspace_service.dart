@@ -1,6 +1,5 @@
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_member_entity.dart';
-
 import 'package:optopus/features/workspace/domain/enums/workspace_role.dart';
 import 'package:optopus/features/workspace/domain/repositories/workspace_repository.dart';
 
@@ -25,12 +24,27 @@ class WorkspaceService {
     );
   }
 
+  Future<WorkspaceEntity> getWorkspace(String workspaceId) {
+    return _repository.getWorkspace(workspaceId);
+  }
+
   Future<List<WorkspaceEntity>> getUserWorkspaces() {
     return _repository.getUserWorkspaces();
   }
 
-  Future<WorkspaceEntity> getWorkspace(String workspaceId) {
-    return _repository.getWorkspace(workspaceId);
+  /// New: Fetches workspaces with member and collection counts
+  Future<List<WorkspaceEntity>> getUserWorkspacesWithStats() {
+    return _repository.getUserWorkspacesWithStats();
+  }
+
+  /// New: Implements server-side search logic
+  Future<List<WorkspaceEntity>> searchWorkspaces(String query) {
+    final trimmedQuery = query.trim();
+    // Optimization: if query is empty, just return standard list
+    if (trimmedQuery.isEmpty) {
+      return _repository.getUserWorkspaces();
+    }
+    return _repository.searchWorkspaces(trimmedQuery);
   }
 
   Future<void> updateWorkspace({
@@ -51,6 +65,10 @@ class WorkspaceService {
 
   Future<void> deleteWorkspace(String workspaceId) {
     return _repository.deleteWorkspace(workspaceId);
+  }
+
+  Future<void> leaveWorkspace(String workspaceId) {
+    return _repository.leaveWorkspace(workspaceId);
   }
 
   // ── Members ──

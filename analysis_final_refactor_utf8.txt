@@ -1,0 +1,49 @@
+﻿Analyzing optopus...                                            
+
+   info - The imported package 'http' isn't a dependency of the importing package - examples\simple_optimization_demo.dart:2:8 - depend_on_referenced_packages
+   info - Constructors for public widgets should have a named 'key' parameter - examples\simple_optimization_demo.dart:11:7 - use_key_in_widget_constructors
+   info - Constructors for public widgets should have a named 'key' parameter - examples\simple_optimization_demo.dart:73:7 - use_key_in_widget_constructors
+   info - Invalid use of a private type in a public API - examples\simple_optimization_demo.dart:75:3 - library_private_types_in_public_api
+   info - Unnecessary use of string interpolation - examples\simple_optimization_demo.dart:170:19 - unnecessary_string_interpolations
+   info - Don't invoke 'print' in production code - examples\simple_optimization_demo.dart:183:7 - avoid_print
+   info - Unnecessary override - lib\core\navigation\navigation_history_controller.dart:106:8 - unnecessary_overrides
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\theme\app_theme.dart:101:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\theme\app_theme.dart:121:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\theme\app_theme.dart:129:52 - deprecated_member_use
+   info - Missing type annotation - lib\core\widgets\auth_button.dart:4:20 - strict_top_level_inference
+   info - 'onWillAccept' is deprecated and shouldn't be used. Use onWillAcceptWithDetails instead. This callback is similar to onWillAcceptWithDetails but does not provide drag details. This feature was deprecated after v3.14.0-0.2.pre - lib\features\editor\presentation\screens\editor_screen.dart:106:13 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\editor\presentation\widgets\editor_node_library.dart:133:60 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use component accessors like .r or .g, or toARGB32 for an explicit conversion - lib\features\editor\presentation\widgets\nodes\color_picker_node.dart:76:51 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use component accessors like .r or .g, or toARGB32 for an explicit conversion - lib\features\editor\presentation\widgets\nodes\color_picker_node.dart:90:39 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\features\home\presentation\controllers\home_view_controller.dart:40:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\home\presentation\controllers\home_view_controller.dart:43:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\profile\presentation\home_profile_widget.dart:14:5 - avoid_print
+  error - The getter 'valueOrNull' isn't defined for the type 'AsyncValue<WorkspaceEntity>' - lib\features\workspace\presentation\controllers\workspace_actions_controller.dart:38:19 - undefined_getter
+   info - The import of 'package:flow_canvas/src/core/theme/flow_theme.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flow_canvas/src/core/theme/theme_export.dart' - packages\flow_canvas\lib\src\core\canvas\flow_canvas.dart:8:8 - unnecessary_import
+   info - 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead - packages\flow_canvas\lib\src\core\canvas\flow_canvas_internal_controller.dart:188:9 - deprecated_member_use
+   info - 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead - packages\flow_canvas\lib\src\core\canvas\flow_canvas_internal_controller.dart:189:9 - deprecated_member_use
+   info - Unnecessary 'this.' qualifier - packages\flow_canvas\lib\src\core\options\components\viewport_options.dart:389:29 - unnecessary_this
+warning - The left operand can't be null, so the right operand is never executed - packages\flow_canvas\lib\src\core\options\components\viewport_options.dart:389:29 - dead_null_aware_expression
+   info - Unnecessary 'this.' qualifier - packages\flow_canvas\lib\src\core\options\components\viewport_options.dart:392:43 - unnecessary_this
+warning - The left operand can't be null, so the right operand is never executed - packages\flow_canvas\lib\src\core\options\components\viewport_options.dart:392:43 - dead_null_aware_expression
+   info - Unnecessary 'this.' qualifier - packages\flow_canvas\lib\src\core\options\components\viewport_options.dart:393:33 - unnecessary_this
+warning - The left operand can't be null, so the right operand is never executed - packages\flow_canvas\lib\src\core\options\components\viewport_options.dart:393:33 - dead_null_aware_expression
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:28:14 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:31:14 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:34:14 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:56:38 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:57:14 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:59:14 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:63:14 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:65:27 - deprecated_member_use
+   info - 'ignore' is deprecated and shouldn't be used. Use `includeFromJson` and `includeToJson` with a value of `false` instead - packages\flow_canvas\lib\src\core\state\flow_canvas_state.dart:66:27 - deprecated_member_use
+   info - 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead - packages\flow_canvas\lib\src\features\minimap\presentation\painters\minimap_painter.dart:80:13 - deprecated_member_use
+   info - 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead - packages\flow_canvas\lib\src\features\minimap\presentation\painters\minimap_painter.dart:82:13 - deprecated_member_use
+
+flutter : 39 issues found. (ran in 7.3s)
+At line:1 char:1
++ flutter analyze --no-pub > analysis_final_refactor.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (39 issues found. (ran in 7.3s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:optopus/router/router.dart';
+import 'package:optopus/app/router/router.dart';
 import 'package:optopus/core/startup/app_startup_provider.dart';
 import 'package:optopus/core/startup/shared_preferences_provider.dart';
 import 'package:optopus/core/theme/theme_provider.dart';

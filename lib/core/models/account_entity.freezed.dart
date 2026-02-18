@@ -15,7 +15,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AccountEntity {
 
- String get id; String get email; String get displayName; String? get avatarUrl; Map<String, dynamic> get preferences; String get planType;
+ String get id;// The unique @handle
+ String? get username;@JsonKey(name: 'full_name') String get displayName;@JsonKey(name: 'avatar_url') String? get avatarUrl;// New Postman-style fields
+ String? get bio; String? get website; String? get location;@JsonKey(name: 'twitter_handle') String? get twitterHandle;@JsonKey(name: 'github_handle') String? get githubHandle;// Existing fields
+ String? get role; String? get email; Map<String, dynamic> get preferences;@JsonKey(name: 'created_at') String? get createdAt;
 /// Create a copy of AccountEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +31,16 @@ $AccountEntityCopyWith<AccountEntity> get copyWith => _$AccountEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AccountEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&const DeepCollectionEquality().equals(other.preferences, preferences)&&(identical(other.planType, planType) || other.planType == planType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AccountEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.website, website) || other.website == website)&&(identical(other.location, location) || other.location == location)&&(identical(other.twitterHandle, twitterHandle) || other.twitterHandle == twitterHandle)&&(identical(other.githubHandle, githubHandle) || other.githubHandle == githubHandle)&&(identical(other.role, role) || other.role == role)&&(identical(other.email, email) || other.email == email)&&const DeepCollectionEquality().equals(other.preferences, preferences)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,displayName,avatarUrl,const DeepCollectionEquality().hash(preferences),planType);
+int get hashCode => Object.hash(runtimeType,id,username,displayName,avatarUrl,bio,website,location,twitterHandle,githubHandle,role,email,const DeepCollectionEquality().hash(preferences),createdAt);
 
 @override
 String toString() {
-  return 'AccountEntity(id: $id, email: $email, displayName: $displayName, avatarUrl: $avatarUrl, preferences: $preferences, planType: $planType)';
+  return 'AccountEntity(id: $id, username: $username, displayName: $displayName, avatarUrl: $avatarUrl, bio: $bio, website: $website, location: $location, twitterHandle: $twitterHandle, githubHandle: $githubHandle, role: $role, email: $email, preferences: $preferences, createdAt: $createdAt)';
 }
 
 
@@ -48,7 +51,7 @@ abstract mixin class $AccountEntityCopyWith<$Res>  {
   factory $AccountEntityCopyWith(AccountEntity value, $Res Function(AccountEntity) _then) = _$AccountEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String email, String displayName, String? avatarUrl, Map<String, dynamic> preferences, String planType
+ String id, String? username,@JsonKey(name: 'full_name') String displayName,@JsonKey(name: 'avatar_url') String? avatarUrl, String? bio, String? website, String? location,@JsonKey(name: 'twitter_handle') String? twitterHandle,@JsonKey(name: 'github_handle') String? githubHandle, String? role, String? email, Map<String, dynamic> preferences,@JsonKey(name: 'created_at') String? createdAt
 });
 
 
@@ -65,15 +68,22 @@ class _$AccountEntityCopyWithImpl<$Res>
 
 /// Create a copy of AccountEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? displayName = null,Object? avatarUrl = freezed,Object? preferences = null,Object? planType = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? username = freezed,Object? displayName = null,Object? avatarUrl = freezed,Object? bio = freezed,Object? website = freezed,Object? location = freezed,Object? twitterHandle = freezed,Object? githubHandle = freezed,Object? role = freezed,Object? email = freezed,Object? preferences = null,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
+as String?,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,bio: freezed == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
+as String?,website: freezed == website ? _self.website : website // ignore: cast_nullable_to_non_nullable
+as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
+as String?,twitterHandle: freezed == twitterHandle ? _self.twitterHandle : twitterHandle // ignore: cast_nullable_to_non_nullable
+as String?,githubHandle: freezed == githubHandle ? _self.githubHandle : githubHandle // ignore: cast_nullable_to_non_nullable
+as String?,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String?,preferences: null == preferences ? _self.preferences : preferences // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,planType: null == planType ? _self.planType : planType // ignore: cast_nullable_to_non_nullable
-as String,
+as Map<String, dynamic>,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -158,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String displayName,  String? avatarUrl,  Map<String, dynamic> preferences,  String planType)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? username, @JsonKey(name: 'full_name')  String displayName, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String? bio,  String? website,  String? location, @JsonKey(name: 'twitter_handle')  String? twitterHandle, @JsonKey(name: 'github_handle')  String? githubHandle,  String? role,  String? email,  Map<String, dynamic> preferences, @JsonKey(name: 'created_at')  String? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AccountEntity() when $default != null:
-return $default(_that.id,_that.email,_that.displayName,_that.avatarUrl,_that.preferences,_that.planType);case _:
+return $default(_that.id,_that.username,_that.displayName,_that.avatarUrl,_that.bio,_that.website,_that.location,_that.twitterHandle,_that.githubHandle,_that.role,_that.email,_that.preferences,_that.createdAt);case _:
   return orElse();
 
 }
@@ -179,10 +189,10 @@ return $default(_that.id,_that.email,_that.displayName,_that.avatarUrl,_that.pre
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String displayName,  String? avatarUrl,  Map<String, dynamic> preferences,  String planType)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? username, @JsonKey(name: 'full_name')  String displayName, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String? bio,  String? website,  String? location, @JsonKey(name: 'twitter_handle')  String? twitterHandle, @JsonKey(name: 'github_handle')  String? githubHandle,  String? role,  String? email,  Map<String, dynamic> preferences, @JsonKey(name: 'created_at')  String? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _AccountEntity():
-return $default(_that.id,_that.email,_that.displayName,_that.avatarUrl,_that.preferences,_that.planType);case _:
+return $default(_that.id,_that.username,_that.displayName,_that.avatarUrl,_that.bio,_that.website,_that.location,_that.twitterHandle,_that.githubHandle,_that.role,_that.email,_that.preferences,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +209,10 @@ return $default(_that.id,_that.email,_that.displayName,_that.avatarUrl,_that.pre
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String displayName,  String? avatarUrl,  Map<String, dynamic> preferences,  String planType)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? username, @JsonKey(name: 'full_name')  String displayName, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String? bio,  String? website,  String? location, @JsonKey(name: 'twitter_handle')  String? twitterHandle, @JsonKey(name: 'github_handle')  String? githubHandle,  String? role,  String? email,  Map<String, dynamic> preferences, @JsonKey(name: 'created_at')  String? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AccountEntity() when $default != null:
-return $default(_that.id,_that.email,_that.displayName,_that.avatarUrl,_that.preferences,_that.planType);case _:
+return $default(_that.id,_that.username,_that.displayName,_that.avatarUrl,_that.bio,_that.website,_that.location,_that.twitterHandle,_that.githubHandle,_that.role,_that.email,_that.preferences,_that.createdAt);case _:
   return null;
 
 }
@@ -214,13 +224,23 @@ return $default(_that.id,_that.email,_that.displayName,_that.avatarUrl,_that.pre
 @JsonSerializable()
 
 class _AccountEntity implements AccountEntity {
-  const _AccountEntity({required this.id, required this.email, required this.displayName, this.avatarUrl, final  Map<String, dynamic> preferences = const {}, this.planType = 'free'}): _preferences = preferences;
+  const _AccountEntity({required this.id, this.username, @JsonKey(name: 'full_name') required this.displayName, @JsonKey(name: 'avatar_url') this.avatarUrl, this.bio, this.website, this.location, @JsonKey(name: 'twitter_handle') this.twitterHandle, @JsonKey(name: 'github_handle') this.githubHandle, this.role, this.email, final  Map<String, dynamic> preferences = const {}, @JsonKey(name: 'created_at') this.createdAt}): _preferences = preferences;
   factory _AccountEntity.fromJson(Map<String, dynamic> json) => _$AccountEntityFromJson(json);
 
 @override final  String id;
-@override final  String email;
-@override final  String displayName;
-@override final  String? avatarUrl;
+// The unique @handle
+@override final  String? username;
+@override@JsonKey(name: 'full_name') final  String displayName;
+@override@JsonKey(name: 'avatar_url') final  String? avatarUrl;
+// New Postman-style fields
+@override final  String? bio;
+@override final  String? website;
+@override final  String? location;
+@override@JsonKey(name: 'twitter_handle') final  String? twitterHandle;
+@override@JsonKey(name: 'github_handle') final  String? githubHandle;
+// Existing fields
+@override final  String? role;
+@override final  String? email;
  final  Map<String, dynamic> _preferences;
 @override@JsonKey() Map<String, dynamic> get preferences {
   if (_preferences is EqualUnmodifiableMapView) return _preferences;
@@ -228,7 +248,7 @@ class _AccountEntity implements AccountEntity {
   return EqualUnmodifiableMapView(_preferences);
 }
 
-@override@JsonKey() final  String planType;
+@override@JsonKey(name: 'created_at') final  String? createdAt;
 
 /// Create a copy of AccountEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -243,16 +263,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AccountEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&const DeepCollectionEquality().equals(other._preferences, _preferences)&&(identical(other.planType, planType) || other.planType == planType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AccountEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.website, website) || other.website == website)&&(identical(other.location, location) || other.location == location)&&(identical(other.twitterHandle, twitterHandle) || other.twitterHandle == twitterHandle)&&(identical(other.githubHandle, githubHandle) || other.githubHandle == githubHandle)&&(identical(other.role, role) || other.role == role)&&(identical(other.email, email) || other.email == email)&&const DeepCollectionEquality().equals(other._preferences, _preferences)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,displayName,avatarUrl,const DeepCollectionEquality().hash(_preferences),planType);
+int get hashCode => Object.hash(runtimeType,id,username,displayName,avatarUrl,bio,website,location,twitterHandle,githubHandle,role,email,const DeepCollectionEquality().hash(_preferences),createdAt);
 
 @override
 String toString() {
-  return 'AccountEntity(id: $id, email: $email, displayName: $displayName, avatarUrl: $avatarUrl, preferences: $preferences, planType: $planType)';
+  return 'AccountEntity(id: $id, username: $username, displayName: $displayName, avatarUrl: $avatarUrl, bio: $bio, website: $website, location: $location, twitterHandle: $twitterHandle, githubHandle: $githubHandle, role: $role, email: $email, preferences: $preferences, createdAt: $createdAt)';
 }
 
 
@@ -263,7 +283,7 @@ abstract mixin class _$AccountEntityCopyWith<$Res> implements $AccountEntityCopy
   factory _$AccountEntityCopyWith(_AccountEntity value, $Res Function(_AccountEntity) _then) = __$AccountEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email, String displayName, String? avatarUrl, Map<String, dynamic> preferences, String planType
+ String id, String? username,@JsonKey(name: 'full_name') String displayName,@JsonKey(name: 'avatar_url') String? avatarUrl, String? bio, String? website, String? location,@JsonKey(name: 'twitter_handle') String? twitterHandle,@JsonKey(name: 'github_handle') String? githubHandle, String? role, String? email, Map<String, dynamic> preferences,@JsonKey(name: 'created_at') String? createdAt
 });
 
 
@@ -280,15 +300,22 @@ class __$AccountEntityCopyWithImpl<$Res>
 
 /// Create a copy of AccountEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? displayName = null,Object? avatarUrl = freezed,Object? preferences = null,Object? planType = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? username = freezed,Object? displayName = null,Object? avatarUrl = freezed,Object? bio = freezed,Object? website = freezed,Object? location = freezed,Object? twitterHandle = freezed,Object? githubHandle = freezed,Object? role = freezed,Object? email = freezed,Object? preferences = null,Object? createdAt = freezed,}) {
   return _then(_AccountEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
+as String?,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,bio: freezed == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
+as String?,website: freezed == website ? _self.website : website // ignore: cast_nullable_to_non_nullable
+as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
+as String?,twitterHandle: freezed == twitterHandle ? _self.twitterHandle : twitterHandle // ignore: cast_nullable_to_non_nullable
+as String?,githubHandle: freezed == githubHandle ? _self.githubHandle : githubHandle // ignore: cast_nullable_to_non_nullable
+as String?,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String?,preferences: null == preferences ? _self._preferences : preferences // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,planType: null == planType ? _self.planType : planType // ignore: cast_nullable_to_non_nullable
-as String,
+as Map<String, dynamic>,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

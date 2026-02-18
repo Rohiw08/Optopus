@@ -1,9 +1,8 @@
 import 'dart:io';
-
 import 'package:optopus/core/domain/failures/failure.dart';
 import 'package:optopus/features/workspace/data/data_sources/workspace_remote_data_source.dart';
-import 'package:optopus/features/workspace/data/models/workspace_model.dart';
 import 'package:optopus/features/workspace/data/models/workspace_member_model.dart';
+import 'package:optopus/features/workspace/data/models/workspace_model.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_member_entity.dart';
 import 'package:optopus/features/workspace/domain/enums/workspace_role.dart';
@@ -32,8 +31,35 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   @override
   Future<List<WorkspaceEntity>> getUserWorkspaces() => _guard(() async {
     final list = await _remote.getUserWorkspaces();
-    return list.map(WorkspaceModel.fromJson).toList();
+    // get_user_workspaces() returns {workspace_id, workspace_name, member_role}
+    // so we map it manually to WorkspaceModel
+    return list.map((json) {
+      return WorkspaceModel.fromJson({
+        'id': json['workspace_id'],
+        'name': json['workspace_name'],
+        'owner_id': '', // not returned by the function, safe default
+        'description': null,
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+        'member_role': json['member_role'],
+      });
+    }).toList();
   });
+
+  @override
+  Future<List<WorkspaceEntity>> getUserWorkspacesWithStats() =>
+      _guard(() async {
+        // Returns full workspace rows + member_count + collection_count
+        final list = await _remote.getUserWorkspacesWithStats();
+        return list.map(WorkspaceModel.fromJson).toList();
+      });
+
+  @override
+  Future<List<WorkspaceEntity>> searchWorkspaces(String query) =>
+      _guard(() async {
+        final list = await _remote.searchWorkspaces(query);
+        return list.map(WorkspaceModel.fromJson).toList();
+      });
 
   @override
   Future<WorkspaceEntity> getWorkspace(String workspaceId) => _guard(() async {
@@ -64,7 +90,8 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Future<List<WorkspaceMemberEntity>> getMembers(String workspaceId) =>
       _guard(() async {
         final list = await _remote.getMembers(workspaceId);
-        return list.map(WorkspaceMemberModel.fromJson).toList();
+        // FIX: was using fromJson which can't handle nested profiles join
+        return list.map(WorkspaceMemberModel.fromSupabaseJson).toList();
       });
 
   @override
@@ -96,28 +123,35 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Future<void> removeMember(String memberId) =>
       _guard(() => _remote.removeMember(memberId));
 
+  @override
+  Future<void> leaveWorkspace(String workspaceId) =>
+      _guard(() => _remote.leaveWorkspace(workspaceId));
+
   // ── Error Guard ──
 
   Future<T> _guard<T>(Future<T> Function() fn) async {
     try {
       return await fn();
     } on PostgrestException catch (e) {
-      if (e.code == '42501' || e.code == 'PGRST301') {
-        throw const WorkspacePermissionDeniedFailure();
+      switch (e.code) {
+        case '42501' || 'PGRST301':
+          throw const WorkspacePermissionDeniedFailure();
+        case '23505':
+          throw const MemberAlreadyExistsFailure('Member already in workspace');
+        case 'PGRST116':
+          throw const WorkspaceNotFoundFailure();
+        default:
+          throw UnknownWorkspaceFailure(e.message);
       }
-      if (e.code == '23505') {
-        throw const MemberAlreadyExistsFailure('Member already in workspace');
-      }
-      if (e.code == 'PGRST116') {
-        throw const WorkspaceNotFoundFailure();
-      }
-      throw UnknownWorkspaceFailure(e.message);
+    } on AuthException catch (e) {
+      throw WorkspacePermissionDeniedFailure(e.message);
     } on SocketException {
       throw const NetworkFailure();
     } on Failure {
-      rethrow;
-    } catch (_) {
-      throw const UnknownWorkspaceFailure();
+      rethrow; // already a typed failure, let it bubble up
+    } catch (e) {
+      throw UnknownWorkspaceFailure(e.toString());
+      // FIX: was throwing const with no message, now includes actual error
     }
   }
 }

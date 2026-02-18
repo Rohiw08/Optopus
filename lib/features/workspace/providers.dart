@@ -8,16 +8,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'providers.g.dart';
 
 @riverpod
-WorkspaceRemoteDataSource workspaceRemoteDataSource(Ref ref) {
+WorkspaceRemoteDataSource _workspaceRemoteDataSource(Ref ref) {
   return WorkspaceRemoteDataSource(ref.read(supabaseClientProvider));
 }
 
 @riverpod
-WorkspaceRepository workspaceRepository(Ref ref) {
-  return WorkspaceRepositoryImpl(ref.read(workspaceRemoteDataSourceProvider));
+WorkspaceRepository _workspaceRepository(Ref ref) {
+  return WorkspaceRepositoryImpl(ref.read(_workspaceRemoteDataSourceProvider));
 }
 
 @riverpod
 WorkspaceService workspaceService(Ref ref) {
-  return WorkspaceService(ref.watch(workspaceRepositoryProvider));
+  return WorkspaceService(ref.watch(_workspaceRepositoryProvider));
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flow_canvas/flow_canvas.dart';
 import 'package:optopus/features/editor/presentation/widgets/nodes/color_picker_node.dart';
 import 'package:optopus/features/editor/presentation/widgets/nodes/input_node.dart';
-import 'package:optopus/features/workspace/subfeatures/flows/domain/entities/flow_entity.dart';
+import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
 
 class EditorScreen extends StatefulWidget {
   final FlowCanvasController controller;

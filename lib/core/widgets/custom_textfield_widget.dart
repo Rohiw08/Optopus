@@ -5,6 +5,8 @@ class CustomTextfield extends StatelessWidget {
   final String hintText;
   final double? width;
   final bool isPassword;
+  final int? maxLines;
+  final int? minLines;
 
   const CustomTextfield({
     super.key,
@@ -12,6 +14,8 @@ class CustomTextfield extends StatelessWidget {
     required this.hintText,
     this.width,
     this.isPassword = false,
+    this.maxLines = 1,
+    this.minLines,
   });
 
   @override
@@ -23,6 +27,8 @@ class CustomTextfield extends StatelessWidget {
       child: TextField(
         controller: controller,
         obscureText: isPassword,
+        maxLines: maxLines,
+        minLines: minLines,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: theme.textTheme.bodyMedium?.copyWith(
@@ -32,11 +38,15 @@ class CustomTextfield extends StatelessWidget {
           fillColor: theme.colorScheme.surfaceContainerHighest,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),

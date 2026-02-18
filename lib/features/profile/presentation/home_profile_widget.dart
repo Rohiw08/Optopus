@@ -9,13 +9,20 @@ class HomeProfileWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final sessionAsync = ref.watch(sessionProvider);
+    final session = ref.watch(sessionProvider);
+
+    print(
+      session.when(
+        data: (data) => data,
+        error: (err, stack) => err,
+        loading: () => "loading",
+      ),
+    );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Container(
-        padding: const EdgeInsets.all(15),
-        child: sessionAsync.when(
+        child: session.when(
           data: (account) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -52,7 +59,7 @@ class HomeProfileWidget extends ConsumerWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                account?.email ?? "",
+                account?.username ?? "",
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w100,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

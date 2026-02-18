@@ -8,7 +8,7 @@ import 'package:optopus/features/auth/presentation/controller/auth_controller.da
 import 'package:optopus/features/auth/presentation/controller/auth_view_provider.dart';
 import 'package:optopus/core/utils/failure_utils.dart';
 
-import 'package:optopus/features/auth/presentation/widgets/shared/auth_richtext.dart';
+import 'package:optopus/core/widgets/redirect_text.dart';
 import 'package:optopus/core/widgets/custom_textfield_widget.dart';
 
 class SignUpWidget extends ConsumerStatefulWidget {
