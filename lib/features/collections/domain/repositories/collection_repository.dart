@@ -13,4 +13,10 @@ abstract class CollectionRepository {
     String? parentId,
   });
   Future<Either<Failure, void>> deleteCollection(String collectionId);
+  Future<Either<Failure, CollectionEntity>> updateCollection({
+    required String collectionId,
+    String? name,
+    String? description,
+    String? parentId,
+  });
 }

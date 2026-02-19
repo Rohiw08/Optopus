@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:optopus/core/widgets/sidebar_content_bar.dart';
 import 'package:optopus/core/widgets/square_icon_button.dart';
 
-class HomeNavigationRail extends StatelessWidget {
-  const HomeNavigationRail({super.key});
+class StudioNavigationRail extends StatelessWidget {
+  const StudioNavigationRail({super.key});
 
   @override
   Widget build(BuildContext context) {

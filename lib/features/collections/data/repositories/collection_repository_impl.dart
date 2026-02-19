@@ -54,4 +54,24 @@ class CollectionRepositoryImpl implements CollectionRepository {
       return left(UnknownWorkspaceFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, CollectionEntity>> updateCollection({
+    required String collectionId,
+    String? name,
+    String? description,
+    String? parentId,
+  }) async {
+    try {
+      final collectionData = await remoteDataSource.updateCollection(
+        collectionId: collectionId,
+        name: name,
+        description: description,
+        parentId: parentId,
+      );
+      return right(CollectionModel.fromJson(collectionData));
+    } catch (e) {
+      return left(UnknownWorkspaceFailure(e.toString()));
+    }
+  }
 }

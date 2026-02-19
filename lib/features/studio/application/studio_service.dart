@@ -5,13 +5,13 @@ import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
 import 'package:optopus/features/collections/application/collection_service.dart';
 import 'package:optopus/features/flows/application/flow_service.dart';
 
-/// Service layer for Home feature
+/// Service layer for Studio feature
 /// Handles business logic for workspace navigation and opening
-class HomeService {
+class StudioService {
   final CollectionService _collectionService;
   final FlowService _flowService;
 
-  HomeService(this._collectionService, this._flowService);
+  StudioService(this._collectionService, this._flowService);
 
   /// Opens a workspace by ensuring it has a collection and flow
   /// Creates default collection and flow if they don't exist

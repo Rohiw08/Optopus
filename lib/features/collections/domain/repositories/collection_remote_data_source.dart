@@ -6,4 +6,10 @@ abstract class CollectionRemoteDataSource {
     String? parentId,
   });
   Future<void> deleteCollection(String collectionId);
+  Future<Map<String, dynamic>> updateCollection({
+    required String collectionId,
+    String? name,
+    String? description,
+    String? parentId,
+  });
 }

@@ -39,4 +39,36 @@ class CollectionRemoteDataSourceImpl implements CollectionRemoteDataSource {
   Future<void> deleteCollection(String collectionId) async {
     await supabaseClient.from('collections').delete().eq('id', collectionId);
   }
+
+  @override
+  Future<Map<String, dynamic>> updateCollection({
+    required String collectionId,
+    String? name,
+    String? description,
+    String? parentId,
+  }) async {
+    final updates = <String, dynamic>{};
+    if (name != null) updates['name'] = name;
+    if (description != null) updates['description'] = description;
+    if (parentId != null) updates['parent_id'] = parentId;
+    updates['updated_at'] = DateTime.now().toIso8601String();
+
+    if (updates.isNotEmpty) {
+      final response = await supabaseClient
+          .from('collections')
+          .update(updates)
+          .eq('id', collectionId)
+          .select()
+          .single();
+      return response;
+    } else {
+      // If no updates, fetch the current state to return
+      final response = await supabaseClient
+          .from('collections')
+          .select()
+          .eq('id', collectionId)
+          .single();
+      return response;
+    }
+  }
 }

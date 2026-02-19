@@ -74,6 +74,9 @@ class _WorkspaceSettingsDialogState
               ? null
               : () async {
                   try {
+                    // Clear previous error
+                    ref.invalidate(workspaceActionsControllerProvider);
+
                     await ref
                         .read(workspaceActionsControllerProvider.notifier)
                         .updateWorkspace(
@@ -81,11 +84,19 @@ class _WorkspaceSettingsDialogState
                           name: _nameController.text,
                           description: _descriptionController.text,
                         );
+
+                    // Check result
+                    final result = ref.read(workspaceActionsControllerProvider);
+                    if (result.hasError) throw result.error!;
+
                     if (context.mounted) Navigator.of(context).pop();
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Failed to update: $e")),
+                        SnackBar(
+                          content: Text("Failed to update: $e"),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                     }
                   }

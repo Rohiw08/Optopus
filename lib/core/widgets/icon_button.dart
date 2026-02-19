@@ -18,13 +18,11 @@ class CustomIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onPressed,
-      icon: UnconstrainedBox(
-        child: Icon(
-          icon,
-          weight: 0.5, // Adjust weight as needed
-          size: size,
-          color: Theme.of(context).iconTheme.color,
-        ),
+      iconSize: size,
+      icon: Icon(
+        icon,
+        weight: 0.5, // Adjust weight as needed
+        color: Theme.of(context).iconTheme.color,
       ),
       tooltip: tooltip,
     );

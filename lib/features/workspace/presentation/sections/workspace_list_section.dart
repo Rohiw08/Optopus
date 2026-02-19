@@ -4,7 +4,6 @@ import 'package:optopus/app/router/router.dart';
 import 'package:optopus/core/widgets/error_screen.dart';
 import 'package:optopus/core/widgets/loading_screen.dart';
 import 'package:optopus/core/widgets/navigation_tile_widget.dart';
-import 'package:optopus/features/home/presentation/controllers/home_view_controller.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
 import 'package:optopus/features/workspace/presentation/controllers/workspace_list_controller.dart';
 
@@ -12,8 +11,9 @@ class WorkspaceListSection extends ConsumerWidget {
   const WorkspaceListSection({super.key});
 
   void _openWorkspace(WorkspaceEntity workspace, WidgetRef ref) {
-    ref.read(homeViewControllerProvider.notifier).openWorkspace(workspace);
-    ref.read(routerProvider).go('/home');
+    // Navigate to studio with workspace ID.
+    // The ProjectStudioScreen will handle loading the workspace into the controller.
+    ref.read(routerProvider).go('/studio/${workspace.id}');
   }
 
   @override

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:optopus/app/router/router.dart';
 import 'package:optopus/core/widgets/button_icon.dart';
-import 'package:optopus/core/widgets/create_button.dart';
 import 'package:optopus/core/widgets/custom_outlined_widget.dart';
 import 'package:optopus/core/widgets/icon_button.dart';
-import 'package:optopus/features/workspace/presentation/widgets/invitation_dialog.dart';
 import 'package:optopus/core/widgets/search_bar.dart';
 import 'package:optopus/core/widgets/sidebar_content_bar.dart';
 
@@ -184,20 +182,11 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
               size: 20,
             ),
           const SizedBox(width: 5),
-          if (screenWidth < 700)
-            CustomIconButton(
-              onPressed: () {},
-              icon: Icons.person_add_alt,
-              size: 20,
-            )
-          else
-            CreateButton(
-              text: "Invite",
-              icon: Icons.person_add_alt,
-              height: 25,
-              width: 95,
-              onPressed: () => showInvitationDialog(context),
-            ),
+          CustomIconButton(
+            onPressed: () {},
+            icon: Icons.person_add_alt,
+            size: 20,
+          ),
           const SizedBox(width: 5),
           CustomIconButton(
             icon: Icons.settings_outlined,

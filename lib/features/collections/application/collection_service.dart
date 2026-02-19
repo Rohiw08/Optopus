@@ -31,4 +31,19 @@ class CollectionService {
     final result = await _repository.deleteCollection(collectionId);
     return result.fold((failure) => throw failure, (_) {});
   }
+
+  Future<CollectionEntity> updateCollection({
+    required String collectionId,
+    String? name,
+    String? description,
+    String? parentId,
+  }) async {
+    final result = await _repository.updateCollection(
+      collectionId: collectionId,
+      name: name,
+      description: description,
+      parentId: parentId,
+    );
+    return result.fold((failure) => throw failure, (collection) => collection);
+  }
 }

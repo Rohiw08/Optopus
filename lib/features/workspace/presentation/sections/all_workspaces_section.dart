@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:optopus/app/router/router.dart';
 import 'package:optopus/features/workspace/presentation/controllers/workspace_list_controller.dart';
 import 'package:optopus/features/workspace/presentation/sections/workspace_table_section.dart';
 import 'package:optopus/features/workspace/presentation/controllers/workspace_ui_controller.dart';
-import 'package:optopus/features/home/presentation/controllers/home_view_controller.dart';
 
 class AllWorkspacesSection extends ConsumerWidget {
   const AllWorkspacesSection({super.key});
@@ -138,10 +137,7 @@ class AllWorkspacesSection extends ConsumerWidget {
       data: (workspaces) => WorkspaceTableSection(
         workspaces: workspaces,
         onWorkspaceTap: (workspace) {
-          ref
-              .read(homeViewControllerProvider.notifier)
-              .openWorkspace(workspace);
-          context.go('/home');
+          ref.read(routerProvider).push('/studio/${workspace.id}');
         },
       ),
       loading: () => const Center(

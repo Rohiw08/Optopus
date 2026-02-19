@@ -5,12 +5,14 @@ class CustomSearchBar extends StatelessWidget {
   final double height;
   final double width;
   final String hintText;
+  final ValueChanged<String>? onChanged;
 
   const CustomSearchBar({
     required this.height,
     required this.width,
     super.key,
     required this.hintText,
+    this.onChanged,
   });
 
   @override
@@ -19,6 +21,7 @@ class CustomSearchBar extends StatelessWidget {
       height: height,
       width: width,
       child: TextField(
+        onChanged: onChanged,
         // controller: controller,
         textAlign: TextAlign.center,
         decoration: InputDecoration(

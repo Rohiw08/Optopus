@@ -9,11 +9,11 @@ part of 'providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(collectionRemoteDataSource)
-final collectionRemoteDataSourceProvider =
-    CollectionRemoteDataSourceProvider._();
+@ProviderFor(_collectionRemoteDataSource)
+final _collectionRemoteDataSourceProvider =
+    _CollectionRemoteDataSourceProvider._();
 
-final class CollectionRemoteDataSourceProvider
+final class _CollectionRemoteDataSourceProvider
     extends
         $FunctionalProvider<
           CollectionRemoteDataSource,
@@ -21,19 +21,19 @@ final class CollectionRemoteDataSourceProvider
           CollectionRemoteDataSource
         >
     with $Provider<CollectionRemoteDataSource> {
-  CollectionRemoteDataSourceProvider._()
+  _CollectionRemoteDataSourceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'collectionRemoteDataSourceProvider',
+        name: r'_collectionRemoteDataSourceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$collectionRemoteDataSourceHash();
+  String debugGetCreateSourceHash() => _$_collectionRemoteDataSourceHash();
 
   @$internal
   @override
@@ -43,7 +43,7 @@ final class CollectionRemoteDataSourceProvider
 
   @override
   CollectionRemoteDataSource create(Ref ref) {
-    return collectionRemoteDataSource(ref);
+    return _collectionRemoteDataSource(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -55,13 +55,13 @@ final class CollectionRemoteDataSourceProvider
   }
 }
 
-String _$collectionRemoteDataSourceHash() =>
-    r'4429a28d3f253f032c77ee4209fca0d0da2e4b96';
+String _$_collectionRemoteDataSourceHash() =>
+    r'4837fce81dd7a9a214725fd75e989f31148b67f6';
 
-@ProviderFor(collectionRepository)
-final collectionRepositoryProvider = CollectionRepositoryProvider._();
+@ProviderFor(_collectionRepository)
+final _collectionRepositoryProvider = _CollectionRepositoryProvider._();
 
-final class CollectionRepositoryProvider
+final class _CollectionRepositoryProvider
     extends
         $FunctionalProvider<
           CollectionRepository,
@@ -69,19 +69,19 @@ final class CollectionRepositoryProvider
           CollectionRepository
         >
     with $Provider<CollectionRepository> {
-  CollectionRepositoryProvider._()
+  _CollectionRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'collectionRepositoryProvider',
+        name: r'_collectionRepositoryProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$collectionRepositoryHash();
+  String debugGetCreateSourceHash() => _$_collectionRepositoryHash();
 
   @$internal
   @override
@@ -91,7 +91,7 @@ final class CollectionRepositoryProvider
 
   @override
   CollectionRepository create(Ref ref) {
-    return collectionRepository(ref);
+    return _collectionRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -103,8 +103,8 @@ final class CollectionRepositoryProvider
   }
 }
 
-String _$collectionRepositoryHash() =>
-    r'4549e9a143d48ab6591e68eb789400df305ca5ce';
+String _$_collectionRepositoryHash() =>
+    r'a62c4c5b9138c518ae1bca6e2d6b560cbeb44fec';
 
 @ProviderFor(collectionService)
 final collectionServiceProvider = CollectionServiceProvider._();
@@ -151,4 +151,4 @@ final class CollectionServiceProvider
   }
 }
 
-String _$collectionServiceHash() => r'765c7c7cd528ab6c2d6c8d5871b4b706e46a8388';
+String _$collectionServiceHash() => r'd4f2465cfa359bf62116718bc2c2eb5469dab566';

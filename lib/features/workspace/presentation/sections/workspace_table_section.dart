@@ -4,8 +4,8 @@ import 'package:optopus/core/session/session_provider.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
 import 'package:optopus/core/utils/time_utils.dart';
 import 'package:optopus/features/workspace/presentation/controllers/workspace_actions_controller.dart';
-import 'package:optopus/features/workspace/presentation/widgets/member_management_dialog.dart';
-import 'package:optopus/features/workspace/presentation/widgets/workspace_settings_dialog.dart';
+import 'package:optopus/features/workspace/presentation/sections/member_management_dialog.dart';
+import 'package:optopus/features/workspace/presentation/sections/workspace_settings_dialog.dart';
 
 class WorkspaceTableSection extends StatelessWidget {
   final List<WorkspaceEntity> workspaces;

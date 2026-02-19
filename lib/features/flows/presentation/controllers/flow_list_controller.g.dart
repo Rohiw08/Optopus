@@ -9,6 +9,58 @@ part of 'flow_list_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(SelectedFlowId)
+final selectedFlowIdProvider = SelectedFlowIdProvider._();
+
+final class SelectedFlowIdProvider
+    extends $NotifierProvider<SelectedFlowId, String?> {
+  SelectedFlowIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedFlowIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedFlowIdHash();
+
+  @$internal
+  @override
+  SelectedFlowId create() => SelectedFlowId();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$selectedFlowIdHash() => r'4be4623d90c6ad0b07aff253effebfc0f57f3b02';
+
+abstract class _$SelectedFlowId extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(FlowListController)
 final flowListControllerProvider = FlowListControllerFamily._();
 

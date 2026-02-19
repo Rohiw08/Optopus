@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:optopus/core/widgets/divider_widget.dart';
-import 'package:optopus/features/dashboard/widgets/home_navigation_widget.dart';
-import 'package:optopus/features/dashboard/widgets/redirects_widget.dart';
+import 'package:optopus/features/home/widgets/home_navigation_widget.dart';
+import 'package:optopus/features/home/widgets/redirects_widget.dart';
 import 'package:optopus/features/profile/presentation/home_profile_widget.dart';
 
 class HomeRedirectBar extends ConsumerWidget {

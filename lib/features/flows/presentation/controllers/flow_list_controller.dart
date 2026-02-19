@@ -1,3 +1,4 @@
+import 'package:optopus/features/collections/presentation/controllers/collection_list_controller.dart';
 import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
 import 'package:optopus/features/flows/providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -5,10 +6,27 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'flow_list_controller.g.dart';
 
 @riverpod
+class SelectedFlowId extends _$SelectedFlowId {
+  @override
+  String? build() => null;
+
+  void set(String? id) => state = id;
+}
+
+@riverpod
 class FlowListController extends _$FlowListController {
   @override
-  Future<List<FlowEntity>> build(String collectionId) {
-    return ref.read(flowServiceProvider).getFlows(collectionId);
+  Future<List<FlowEntity>> build(String collectionId) async {
+    final flows = await ref.read(flowServiceProvider).getFlows(collectionId);
+    final query = ref.watch(collectionSearchQueryProvider);
+
+    if (query.isEmpty) {
+      return flows;
+    }
+
+    return flows
+        .where((f) => f.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<void> createFlow({

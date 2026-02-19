@@ -9,16 +9,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'providers.g.dart';
 
 @riverpod
-CollectionRemoteDataSource collectionRemoteDataSource(Ref ref) {
+CollectionRemoteDataSource _collectionRemoteDataSource(Ref ref) {
   return CollectionRemoteDataSourceImpl(ref.read(supabaseClientProvider));
 }
 
 @riverpod
-CollectionRepository collectionRepository(Ref ref) {
-  return CollectionRepositoryImpl(ref.read(collectionRemoteDataSourceProvider));
+CollectionRepository _collectionRepository(Ref ref) {
+  return CollectionRepositoryImpl(
+    ref.read(_collectionRemoteDataSourceProvider),
+  );
 }
 
 @riverpod
 CollectionService collectionService(Ref ref) {
-  return CollectionService(ref.watch(collectionRepositoryProvider));
+  return CollectionService(ref.watch(_collectionRepositoryProvider));
 }
