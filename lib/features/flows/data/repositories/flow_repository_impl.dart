@@ -10,18 +10,28 @@ class FlowRepositoryImpl implements FlowRepository {
 
   FlowRepositoryImpl(this.remoteDataSource);
 
-  @override
-  Future<Either<Failure, List<FlowEntity>>> getFlows(
-    String collectionId,
-  ) async {
+  Future<Either<Failure, T>> _guard<T>(Future<T> Function() body) async {
     try {
-      final flowsData = await remoteDataSource.getFlows(collectionId);
-      final flows = flowsData.map((data) => FlowModel.fromJson(data)).toList();
-      return right(flows);
+      return right(await body());
     } catch (e) {
       return left(UnknownWorkspaceFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, List<FlowEntity>>> getFlows(String collectionId) =>
+      _guard(() async {
+        final list = await remoteDataSource.getFlows(collectionId);
+        return list.map(FlowModel.fromJson).toList();
+      });
+
+  @override
+  Future<Either<Failure, List<FlowEntity>>> getFlowsByWorkspace(
+    String workspaceId,
+  ) => _guard(() async {
+    final list = await remoteDataSource.getFlowsByWorkspace(workspaceId);
+    return list.map(FlowModel.fromJson).toList();
+  });
 
   @override
   Future<Either<Failure, FlowEntity>> createFlow({
@@ -56,12 +66,14 @@ class FlowRepositoryImpl implements FlowRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteFlow(String flowId) async {
-    try {
-      await remoteDataSource.deleteFlow(flowId);
-      return right(null);
-    } catch (e) {
-      return left(UnknownWorkspaceFailure(e.toString()));
-    }
-  }
+  Future<Either<Failure, void>> deleteFlow(String flowId) => _guard(() async {
+    await remoteDataSource.deleteFlow(flowId);
+  });
+
+  @override
+  Future<Either<Failure, FlowEntity>> getFlowById(String flowId) =>
+      _guard(() async {
+        final data = await remoteDataSource.getFlowById(flowId);
+        return FlowModel.fromJson(data);
+      });
 }

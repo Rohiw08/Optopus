@@ -5,12 +5,14 @@ class CustomIconButton extends StatelessWidget {
     super.key,
     this.onPressed,
     required this.icon,
+    this.iconWidget,
     required this.size,
     this.tooltip = "",
   });
 
   final VoidCallback? onPressed;
   final IconData icon;
+  final Widget? iconWidget;
   final double size;
   final String tooltip;
 
@@ -19,11 +21,13 @@ class CustomIconButton extends StatelessWidget {
     return IconButton(
       onPressed: onPressed,
       iconSize: size,
-      icon: Icon(
-        icon,
-        weight: 0.5, // Adjust weight as needed
-        color: Theme.of(context).iconTheme.color,
-      ),
+      icon:
+          iconWidget ??
+          Icon(
+            icon,
+            weight: 0.5, // Adjust weight as needed
+            color: Theme.of(context).iconTheme.color,
+          ),
       tooltip: tooltip,
     );
   }

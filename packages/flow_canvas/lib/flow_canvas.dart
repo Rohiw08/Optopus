@@ -7,6 +7,7 @@ library;
 // --- Core Canvas ---
 export 'src/core/canvas/flow_canvas.dart';
 export 'src/core/canvas/flow_canvas_controller.dart';
+export 'src/core/state/flow_canvas_state.dart';
 
 // --- Node Feature ---
 export 'src/features/nodes/domain/models/node.dart';

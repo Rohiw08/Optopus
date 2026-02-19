@@ -4,7 +4,6 @@ import 'package:optopus/app/router/router.dart';
 import 'package:optopus/core/widgets/button_icon.dart';
 import 'package:optopus/core/widgets/custom_outlined_widget.dart';
 import 'package:optopus/core/widgets/icon_button.dart';
-import 'package:optopus/core/widgets/search_bar.dart';
 import 'package:optopus/core/widgets/sidebar_content_bar.dart';
 
 import 'package:optopus/core/utils/screen_width.dart';
@@ -39,10 +38,9 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
               MoveWindow(child: Container()),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildLeadingActions(context, ref, screenWidth),
-                if (screenWidth > 700) _buildSearchArea(),
                 _buildTrailingActions(context, ref, screenWidth),
               ],
             ),
@@ -57,28 +55,20 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
     WidgetRef ref,
     double screenWidth,
   ) {
-    return Expanded(
-      child: Row(
-        children: [
-          const SizedBox(width: 10),
-          _buildNavigationHistory(ref),
-          const SizedBox(width: 10),
-          if (screenWidth < 700)
-            CustomIconButton(
-              onPressed: () {},
-              icon: Icons.person_add_alt,
-              size: 20,
-            )
-          else
-            CustomOutlinedButton(
-              text: "Home",
-              height: 25,
-              width: 95,
-              onPressed: () => ref.read(routerProvider).go("/home"),
-            ),
-          _buildWorkspaceMenu(context),
-        ],
-      ),
+    return Row(
+      children: [
+        const SizedBox(width: 10),
+        _buildNavigationHistory(ref),
+        const SizedBox(width: 10),
+        if (screenWidth >= 700)
+          CustomOutlinedButton(
+            text: "Home",
+            height: 25,
+            width: 95,
+            onPressed: () => ref.read(routerProvider).go("/home"),
+          ),
+        _buildWorkspaceMenu(context, screenWidth),
+      ],
     );
   }
 
@@ -122,8 +112,10 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildWorkspaceMenu(BuildContext context) {
+  Widget _buildWorkspaceMenu(BuildContext context, double screenWidth) {
     final theme = Theme.of(context);
+    final isCompact = screenWidth < 600;
+
     return MenuAnchor(
       alignmentOffset: const Offset(0, 5),
       style: MenuStyle(
@@ -139,28 +131,22 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
               controller.open();
             }
           },
-          child: CustomButtonIcon(
-            height: 25,
-            width: 150,
-            text: "Workspace",
-            onPressed: () {},
-            icon: Icons.keyboard_arrow_down_sharp,
-          ),
+          child: isCompact
+              ? CustomIconButton(
+                  onPressed: () {},
+                  icon: Icons.workspaces_outline,
+                  size: 20,
+                )
+              : CustomButtonIcon(
+                  height: 25,
+                  width: screenWidth < 800 ? 110 : 150,
+                  text: screenWidth < 800 ? "Work" : "Workspace",
+                  onPressed: () {},
+                  icon: Icons.keyboard_arrow_down_sharp,
+                ),
         );
       },
       menuChildren: [const WorkspacePopup()],
-    );
-  }
-
-  Widget _buildSearchArea() {
-    return const Expanded(
-      child: Center(
-        child: CustomSearchBar(
-          height: 33,
-          width: 180,
-          hintText: "Search directory",
-        ),
-      ),
     );
   }
 
@@ -170,23 +156,18 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
     double screenWidth,
   ) {
     final themeMode = ref.watch(themeProvider);
+    final showExtraIcons = screenWidth >= 850;
 
-    return Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          if (screenWidth <= 700)
-            CustomIconButton(
-              onPressed: () {},
-              icon: Icons.search_outlined,
-              size: 20,
-            ),
-          const SizedBox(width: 5),
-          CustomIconButton(
-            onPressed: () {},
-            icon: Icons.person_add_alt,
-            size: 20,
-          ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        const SizedBox(width: 5),
+        CustomIconButton(
+          onPressed: () {},
+          icon: Icons.person_add_alt,
+          size: 20,
+        ),
+        if (showExtraIcons) ...[
           const SizedBox(width: 5),
           CustomIconButton(
             icon: Icons.settings_outlined,
@@ -198,22 +179,22 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
             onPressed: () {},
             size: 20,
           ),
-          CustomIconButton(
-            onPressed: () => ref.read(themeProvider.notifier).toggle(),
-            icon: themeMode == ThemeMode.dark
-                ? Icons.dark_mode
-                : Icons.light_mode,
-            size: 20,
-          ),
-          const SizedBox(width: 10),
-          _buildProfileMenu(context, ref),
-          if (!kIsWeb &&
-              (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) ...[
-            const WindowButtons(),
-            const SizedBox(width: 5),
-          ],
         ],
-      ),
+        CustomIconButton(
+          onPressed: () => ref.read(themeProvider.notifier).toggle(),
+          icon: themeMode == ThemeMode.dark
+              ? Icons.dark_mode
+              : Icons.light_mode,
+          size: 20,
+        ),
+        const SizedBox(width: 10),
+        _buildProfileMenu(context, ref),
+        if (!kIsWeb &&
+            (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) ...[
+          const WindowButtons(),
+          const SizedBox(width: 5),
+        ],
+      ],
     );
   }
 

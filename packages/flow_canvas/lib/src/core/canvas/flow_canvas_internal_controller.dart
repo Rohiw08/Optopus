@@ -75,6 +75,22 @@ class FlowCanvasInternalController extends Notifier<FlowCanvasState> {
     this.initialState,
   });
 
+  final List<void Function(FlowCanvasState)> _listeners = [];
+
+  void addListener(void Function(FlowCanvasState) listener) {
+    _listeners.add(listener);
+  }
+
+  void removeListener(void Function(FlowCanvasState) listener) {
+    _listeners.remove(listener);
+  }
+
+  void _notifyListeners(FlowCanvasState newState) {
+    for (final listener in _listeners) {
+      listener(newState);
+    }
+  }
+
   @override
   FlowCanvasState build() {
     // Read registries and services from providers
@@ -180,6 +196,7 @@ class FlowCanvasInternalController extends Notifier<FlowCanvasState> {
   void _onStateChanged(FlowCanvasState newState) {
     edgeGeometry.updateGeometryIfNeeded(newState);
     _updateTransformationController(newState);
+    _notifyListeners(newState);
   }
 
   void _updateTransformationController([FlowCanvasState? s]) {
@@ -217,6 +234,14 @@ class FlowCanvasInternalController extends Notifier<FlowCanvasState> {
   // =================================================================================
 
   FlowCanvasState get currentState => state;
+
+  /// Replaces the current canvas state with a new one.
+  /// Typically used for loading a saved graph.
+  void load(FlowCanvasState newState) {
+    state = newState;
+    _onStateChanged(newState);
+    _history.init(newState); // Re-initialize history with the loaded state
+  }
 
   // Dispose is handled by ref.onDispose
 }

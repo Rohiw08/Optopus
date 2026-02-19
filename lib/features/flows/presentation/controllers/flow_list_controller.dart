@@ -49,4 +49,17 @@ class FlowListController extends _$FlowListController {
       return ref.read(flowServiceProvider).getFlows(collectionId);
     });
   }
+
+  Future<void> renameFlow({
+    required String flowId,
+    required String newName,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref
+          .read(flowServiceProvider)
+          .updateFlow(flowId: flowId, name: newName);
+      return ref.read(flowServiceProvider).getFlows(collectionId);
+    });
+  }
 }

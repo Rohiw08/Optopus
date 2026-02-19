@@ -5,7 +5,6 @@ import 'package:flow_canvas/src/core/options/flow_options.dart';
 import 'package:flow_canvas/src/core/options/options_provider.dart';
 import 'package:flow_canvas/src/core/providers/providers.dart';
 import 'package:flow_canvas/src/core/state/flow_canvas_state.dart';
-import 'package:flow_canvas/src/core/theme/flow_theme.dart';
 import 'package:flow_canvas/src/core/theme/theme_export.dart';
 import 'package:flow_canvas/src/features/background/presentation/flow_background.dart';
 import 'package:flow_canvas/src/features/edges/domain/edge_index.dart';
@@ -33,6 +32,7 @@ class FlowCanvas extends StatefulWidget {
   // --- CORE MEMBERS ---
   /// An optional controller to imperatively manage the canvas.
   final FlowCanvasController? controller;
+  final FlowCanvasState? initialState;
   final List<FlowNode>? initialNodes;
   final List<FlowEdge>? initialEdges;
   final NodeRegistry nodeRegistry;
@@ -45,7 +45,8 @@ class FlowCanvas extends StatefulWidget {
 
   const FlowCanvas({
     super.key,
-    this.controller, // Add the controller to the constructor
+    this.controller,
+    this.initialState,
     required this.nodeRegistry,
     required this.edgeRegistry,
     this.initialNodes,
@@ -73,32 +74,38 @@ class _FlowCanvasState extends State<FlowCanvas> {
     // Use the user's controller or create a new one if not provided
     _facade = widget.controller ?? FlowCanvasController();
 
-    final initialNodesMap = {
-      for (var n in widget.initialNodes ?? []) n.id as String: n as FlowNode
-    };
+    FlowCanvasState initialState;
 
-    final initialNodeStatesMap = {
-      for (var n in widget.initialNodes ?? [])
-        n.id as String: const NodeRuntimeState(),
-    };
+    if (widget.initialState != null) {
+      initialState = widget.initialState!;
+    } else {
+      final initialNodesMap = {
+        for (var n in widget.initialNodes ?? []) n.id as String: n as FlowNode
+      };
 
-    final initialEdgesMap = {
-      for (var e in widget.initialEdges ?? []) e.id as String: e as FlowEdge
-    };
+      final initialNodeStatesMap = {
+        for (var n in widget.initialNodes ?? [])
+          n.id as String: const NodeRuntimeState(),
+      };
 
-    final initialEdgesStatesMap = {
-      for (var e in widget.initialEdges ?? [])
-        e.id as String: const EdgeRuntimeState(),
-    };
+      final initialEdgesMap = {
+        for (var e in widget.initialEdges ?? []) e.id as String: e as FlowEdge
+      };
 
-    final initialState = FlowCanvasState.initial().copyWith(
-      nodes: initialNodesMap,
-      edges: initialEdgesMap,
-      nodeStates: initialNodeStatesMap,
-      edgeStates: initialEdgesStatesMap,
-      nodeIndex: NodeIndex.fromNodes(initialNodesMap.values),
-      edgeIndex: EdgeIndex.fromEdges(initialEdgesMap),
-    );
+      final initialEdgesStatesMap = {
+        for (var e in widget.initialEdges ?? [])
+          e.id as String: const EdgeRuntimeState(),
+      };
+
+      initialState = FlowCanvasState.initial().copyWith(
+        nodes: initialNodesMap,
+        edges: initialEdgesMap,
+        nodeStates: initialNodeStatesMap,
+        edgeStates: initialEdgesStatesMap,
+        nodeIndex: NodeIndex.fromNodes(initialNodesMap.values),
+        edgeIndex: EdgeIndex.fromEdges(initialEdgesMap),
+      );
+    }
 
     _providerContainer = ProviderContainer(
       overrides: [
@@ -143,6 +150,7 @@ class _FlowCanvasState extends State<FlowCanvas> {
           options: widget.options,
           child: _FlowCanvasCore(
             overlays: widget.overlays,
+            centerOnInitialLoad: widget.initialState == null,
           ),
         ),
       ),
@@ -152,9 +160,11 @@ class _FlowCanvasState extends State<FlowCanvas> {
 
 class _FlowCanvasCore extends ConsumerStatefulWidget {
   final List<Widget> overlays;
+  final bool centerOnInitialLoad;
 
   const _FlowCanvasCore({
     required this.overlays,
+    this.centerOnInitialLoad = true,
   });
 
   @override
@@ -188,7 +198,9 @@ class _FlowCanvasCoreState extends ConsumerState<_FlowCanvasCore> {
                 );
               }
               if (context.mounted && !_hasInitialized) {
-                controller.viewport.centerOnPosition(Offset.zero);
+                if (widget.centerOnInitialLoad) {
+                  controller.viewport.centerOnPosition(Offset.zero);
+                }
                 _hasInitialized = true;
               }
             },

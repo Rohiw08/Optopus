@@ -1,6 +1,6 @@
 import 'package:optopus/features/collections/domain/entities/collection_entity.dart';
 import 'package:optopus/features/collections/providers.dart';
-import 'package:optopus/features/flows/presentation/controllers/flow_list_controller.dart';
+import 'package:optopus/features/flows/providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:optopus/features/collections/data/models/collection_model.dart';
@@ -74,29 +74,33 @@ class CollectionListController extends _$CollectionListController {
 
     final lowerQuery = query.toLowerCase();
 
-    // We need to identify which collections match the query directly,
-    // OR contain flows that match the query.
-    // FlowListController already filters by query, so if it returns items, we have matches.
+    // OPTIMIZED SEARCH: Fetch all flows for the entire workspace once
+    final allWorkspaceFlows = await ref
+        .read(flowServiceProvider)
+        .getFlowsByWorkspace(workspaceId);
 
     final matchingCollections = <CollectionEntity>{};
 
     for (final c in collections) {
-      // 1. Direct match
+      // 1. Direct match on collection
       if (c.name.toLowerCase().contains(lowerQuery) ||
           (c.description?.toLowerCase().contains(lowerQuery) ?? false)) {
         matchingCollections.add(c);
         continue;
       }
 
-      // 2. Flow match (watching the provider ensures we get updates and it uses the same query)
-      final flowsAsync = ref.watch(flowListControllerProvider(c.id));
+      // 2. Match on ANY flow within this collection
+      final matchingFlowsInCollection = allWorkspaceFlows.where(
+        (f) =>
+            f.collectionId == c.id && f.name.toLowerCase().contains(lowerQuery),
+      );
 
-      // If data is available and list is not empty (meaning filters matched something)
-      if (flowsAsync.hasValue && flowsAsync.value!.isNotEmpty) {
+      if (matchingFlowsInCollection.isNotEmpty) {
         matchingCollections.add(c);
       }
     }
 
+    // Retain Ancestors to maintain tree structure integrity
     final result = <CollectionEntity>{...matchingCollections};
 
     for (final match in matchingCollections) {

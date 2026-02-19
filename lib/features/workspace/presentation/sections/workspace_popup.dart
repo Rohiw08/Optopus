@@ -11,13 +11,16 @@ class WorkspacePopup extends ConsumerWidget {
 
     return Container(
       width: 300,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      height: 400,
+      constraints: const BoxConstraints(maxHeight: 400),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       color: theme.scaffoldBackgroundColor,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment:
-            CrossAxisAlignment.center, // Center align for top section
-        children: [WorkspaceListSection()],
+      child: const SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [WorkspaceListSection()],
+        ),
       ),
     );
   }

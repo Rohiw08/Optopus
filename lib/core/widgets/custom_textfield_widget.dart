@@ -35,17 +35,17 @@ class CustomTextfield extends StatelessWidget {
             color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           filled: true,
-          fillColor: theme.colorScheme.surfaceContainerHighest,
+          fillColor: theme.colorScheme.surfaceContainerLow,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(
-              color: theme.colorScheme.outline.withValues(alpha: 0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.4),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(
-              color: theme.colorScheme.outline.withValues(alpha: 0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.4),
             ),
           ),
           focusedBorder: OutlineInputBorder(

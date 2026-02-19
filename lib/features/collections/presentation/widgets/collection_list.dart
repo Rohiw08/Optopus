@@ -4,6 +4,7 @@ import 'package:optopus/features/collections/presentation/controllers/collection
 import 'package:optopus/features/collections/domain/entities/collection_entity.dart';
 import 'package:optopus/features/flows/presentation/controllers/flow_list_controller.dart';
 import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
+import 'package:optopus/features/studio/presentation/controllers/studio_view_controller.dart';
 
 class CollectionList extends ConsumerWidget {
   final String workspaceId;
@@ -73,6 +74,13 @@ class _CollectionTreeItem extends ConsumerStatefulWidget {
 
 class _CollectionTreeItemState extends ConsumerState<_CollectionTreeItem> {
   final Set<String> _expandedIds = {};
+  late final ExpansionTileController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ExpansionTileController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +101,11 @@ class _CollectionTreeItemState extends ConsumerState<_CollectionTreeItem> {
     final isCreatingFlow = creatingFlowId == widget.collection.id;
     final isRenaming = renamingId == widget.collection.id;
 
-    // Auto-expand checks
-    if ((isCreatingSub || isCreatingFlow) &&
-        !_expandedIds.contains(widget.collection.id)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() => _expandedIds.add(widget.collection.id));
-        }
-      });
+    // Auto-expand checks - using controller instead of key-switching or post-frame callbacks
+    if (isCreatingSub || isCreatingFlow) {
+      if (!_controller.isExpanded) {
+        _controller.expand();
+      }
     }
 
     final flows = flowsAsync.when(
@@ -109,16 +114,15 @@ class _CollectionTreeItemState extends ConsumerState<_CollectionTreeItem> {
       error: (_, __) => <FlowEntity>[],
     );
 
-    final isExpanded =
-        _expandedIds.contains(widget.collection.id) ||
-        isCreatingSub ||
-        isCreatingFlow;
+    final currentIsExpanded =
+        _controller.isExpanded || _expandedIds.contains(widget.collection.id);
 
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
-        key: ValueKey('expansion_${widget.collection.id}_$isExpanded'),
-        initiallyExpanded: isExpanded,
+        controller: _controller,
+        key: ValueKey('expansion_${widget.collection.id}'), // Stable key!
+        initiallyExpanded: currentIsExpanded,
         onExpansionChanged: (expanded) {
           setState(() {
             if (expanded) {
@@ -138,7 +142,7 @@ class _CollectionTreeItemState extends ConsumerState<_CollectionTreeItem> {
           children: [
             SizedBox(width: widget.depth * 12.0),
             Icon(
-              isExpanded
+              currentIsExpanded
                   ? Icons.keyboard_arrow_down
                   : Icons.keyboard_arrow_right,
               color: Theme.of(context).iconTheme.color,
@@ -287,6 +291,7 @@ class _FlowListItem extends ConsumerWidget {
       trailing: _buildPopupMenu(context, ref),
       onTap: () {
         ref.read(selectedFlowIdProvider.notifier).set(flow.id);
+        ref.read(studioViewControllerProvider.notifier).showEditor(flow.id);
       },
     );
   }

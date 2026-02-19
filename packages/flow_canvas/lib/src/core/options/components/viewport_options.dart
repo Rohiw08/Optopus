@@ -386,11 +386,11 @@ class ViewportOptions with Diagnosticable {
       autoPanSpeed: autoPanSpeed ?? this.autoPanSpeed,
       autoPanMargin: autoPanMargin ?? this.autoPanMargin,
       snapToGrid: snapToGrid ?? this.snapToGrid,
-      snapGrid: snapGrid ?? this.snapGrid,
+      snapGrid: snapGrid,
       onlyRenderVisibleElements:
           onlyRenderVisibleElements ?? this.onlyRenderVisibleElements,
-      translateExtent: translateExtent ?? this.translateExtent,
-      nodeExtent: nodeExtent ?? this.nodeExtent,
+      translateExtent: translateExtent,
+      nodeExtent: nodeExtent,
       preventScrolling: preventScrolling ?? this.preventScrolling,
     );
   }

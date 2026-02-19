@@ -66,6 +66,7 @@ import 'package:flow_canvas/src/features/z_index/application/z_index_controller.
 /// ```
 class FlowCanvasController {
   FlowCanvasInternalController? _internalController;
+  final List<void Function(FlowCanvasState)> _listeners = [];
 
   /// A check to ensure the controller is attached to a canvas.
   void _assertAttached() {
@@ -86,12 +87,18 @@ class FlowCanvasController {
           'This is usually fine during hot reload.');
     }
     _internalController = internalController;
+    for (final listener in _listeners) {
+      _internalController!.addListener(listener);
+    }
   }
 
   /// Internal method for the FlowCanvas widget to unlink the controllers.
   /// Not for public use.
   @internal
   void detach() {
+    for (final listener in _listeners) {
+      _internalController?.removeListener(listener);
+    }
     _internalController = null;
   }
 
@@ -99,6 +106,27 @@ class FlowCanvasController {
   FlowCanvasState get currentState {
     _assertAttached();
     return _internalController!.currentState;
+  }
+
+  /// Replaces the current canvas state with a new one.
+  /// Typically used for loading a saved graph.
+  void load(FlowCanvasState state) {
+    _assertAttached();
+    _internalController!.load(state);
+  }
+
+  /// Adds a listener that is called whenever the canvas state changes.
+  void addListener(void Function(FlowCanvasState) listener) {
+    if (!_listeners.contains(listener)) {
+      _listeners.add(listener);
+      _internalController?.addListener(listener);
+    }
+  }
+
+  /// Removes a previously added listener.
+  void removeListener(void Function(FlowCanvasState) listener) {
+    _listeners.remove(listener);
+    _internalController?.removeListener(listener);
   }
 
   // --- Delegated Sub-Controllers ---

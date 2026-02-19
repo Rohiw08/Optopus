@@ -323,7 +323,7 @@ final class CollectionListControllerProvider
 }
 
 String _$collectionListControllerHash() =>
-    r'8cdba66a72422ced98dea1855c66e6155f61ca0e';
+    r'9afc94f230963d814b2f07f645b30c941589d447';
 
 final class CollectionListControllerFamily extends $Family
     with

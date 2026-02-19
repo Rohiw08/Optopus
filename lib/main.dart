@@ -56,12 +56,14 @@ class MyApp extends ConsumerWidget {
         );
       },
       error: (err, stack) => MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         themeMode: themeMode,
         home: ErrorScreen(message: err.toString()),
       ),
       loading: () => MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         themeMode: themeMode,

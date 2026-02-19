@@ -71,8 +71,19 @@ abstract class FlowCanvasState with _$FlowCanvasState {
   Map<String, dynamic> toJson() =>
       throw UnimplementedError('toJson should be generated');
 
-  factory FlowCanvasState.fromJson(Map<String, dynamic> json) =>
-      _$FlowCanvasStateFromJson(json);
+  factory FlowCanvasState.fromJson(Map<String, dynamic> json) {
+    final state = _$FlowCanvasStateFromJson(json);
+    return state.copyWith(
+      nodeStates: {
+        for (var n in state.nodes.values) n.id: const NodeRuntimeState(),
+      },
+      edgeStates: {
+        for (var e in state.edges.values) e.id: const EdgeRuntimeState(),
+      },
+      nodeIndex: NodeIndex.fromNodes(state.nodes.values),
+      edgeIndex: EdgeIndex.fromEdges(state.edges),
+    );
+  }
 
   factory FlowCanvasState.initial() => FlowCanvasState(
         nodeIndex: NodeIndex.empty(),

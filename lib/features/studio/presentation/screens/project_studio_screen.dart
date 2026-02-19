@@ -12,6 +12,8 @@ import 'package:optopus/features/editor/presentation/widgets/editor_right_action
 import 'package:optopus/features/editor/presentation/widgets/editor_node_library.dart';
 import 'package:optopus/features/workspace/presentation/controllers/workspace_list_controller.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
+import 'package:optopus/features/flows/presentation/controllers/flow_providers.dart';
+import 'package:optopus/features/flows/presentation/controllers/flow_list_controller.dart';
 
 class ProjectStudioScreen extends ConsumerStatefulWidget {
   final String? workspaceId;
@@ -41,13 +43,25 @@ class _ProjectStudioScreenState extends ConsumerState<ProjectStudioScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant ProjectStudioScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.workspaceId != oldWidget.workspaceId) {
+      // Clear state when switching workspace
+      Future.microtask(() {
+        ref.read(studioViewControllerProvider.notifier).clear();
+        ref.read(selectedFlowIdProvider.notifier).set(null);
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       endDrawer: ref
           .watch(studioViewControllerProvider)
           .maybeWhen(
-            editor: (_) => const EditorNodeLibraryDrawer(),
+            editor: (flowId) => const EditorNodeLibraryDrawer(),
             orElse: () => null,
           ),
       appBar: const AppBarWidget(),
@@ -80,7 +94,10 @@ class _ProjectStudioScreenState extends ConsumerState<ProjectStudioScreen> {
                           if (_leftSidebarWidth > 500) _leftSidebarWidth = 500;
                         });
                       },
-                      child: Container(width: 4, color: Colors.transparent),
+                      child: Container(
+                        width: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -90,12 +107,13 @@ class _ProjectStudioScreenState extends ConsumerState<ProjectStudioScreen> {
                           studioViewControllerProvider,
                         );
                         return viewState.when(
-                          empty: () => Center(child: Text(widget.workspaceId!)),
-                          dashboard: (workspace) =>
-                              Center(child: Text(workspace.name)),
-                          editor: (flow) => EditorScreen(
+                          empty: () => const SizedBox.shrink(),
+                          dashboard: (workspaceId) =>
+                              Center(child: Text('Dashboard: $workspaceId')),
+                          editor: (flowId) => EditorScreen(
                             controller: _controller,
-                          ), // TODO: Pass flow data to controller
+                            flowId: flowId,
+                          ),
                         );
                       },
                     ),
@@ -107,27 +125,39 @@ class _ProjectStudioScreenState extends ConsumerState<ProjectStudioScreen> {
                       onHorizontalDragUpdate: (details) {
                         setState(() {
                           _rightSidebarWidth -= details.delta.dx;
-                          // Clamp width
                           if (_rightSidebarWidth < 45) _rightSidebarWidth = 45;
-                          if (_rightSidebarWidth > 500)
+                          if (_rightSidebarWidth > 500) {
                             _rightSidebarWidth = 500;
+                          }
                         });
                       },
-                      child: Container(width: 4, color: Colors.transparent),
+                      child: Container(
+                        width: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
                     ),
                   ),
                   Consumer(
                     builder: (context, ref, child) {
                       final viewState = ref.watch(studioViewControllerProvider);
                       return viewState.maybeWhen(
-                        editor: (flow) => EditorRightActions(
-                          width: _rightSidebarWidth,
-                          controller: _controller,
-                          flow: flow,
+                        editor: (flowId) => Consumer(
+                          builder: (context, ref, child) {
+                            final flowAsync = ref.watch(flowProvider(flowId));
+                            return flowAsync.when(
+                              data: (flow) => EditorRightActions(
+                                width: _rightSidebarWidth,
+                                controller: _controller,
+                                flow: flow,
+                              ),
+                              loading: () =>
+                                  SizedBox(width: _rightSidebarWidth),
+                              error: (err, _) =>
+                                  SizedBox(width: _rightSidebarWidth),
+                            );
+                          },
                         ),
-                        orElse: () => SizedBox(
-                          width: _rightSidebarWidth,
-                        ), // Or specific HomeRightActions
+                        orElse: () => SizedBox(width: _rightSidebarWidth),
                       );
                     },
                   ),

@@ -103,30 +103,51 @@ class EditorRightActions extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           if (flow != null) ...[
-            CustomIconButton(
-              icon: Icons.save,
-              onPressed: () async {
-                final json = controller.currentState.toJson();
-                await ref
-                    .read(editorControllerProvider.notifier)
-                    .saveFlow(flowId: flow!.id, data: json);
+            Consumer(
+              builder: (context, ref, child) {
+                final saveState = ref.watch(editorControllerProvider);
+                return CustomIconButton(
+                  icon: Icons.save,
+                  iconWidget: saveState.isLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : null,
+                  onPressed: saveState.isLoading
+                      ? () {}
+                      : () async {
+                          final json = controller.currentState.toJson();
+                          await ref
+                              .read(editorControllerProvider.notifier)
+                              .saveFlow(flowId: flow!.id, data: json);
 
-                final saveState = ref.read(editorControllerProvider);
-                if (context.mounted) {
-                  saveState.when(
-                    data: (_) => ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('Flow saved'))),
-                    error: (error, _) =>
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error saving flow: $error')),
-                        ),
-                    loading: () {},
-                  );
-                }
+                          if (context.mounted) {
+                            final updatedState = ref.read(
+                              editorControllerProvider,
+                            );
+                            updatedState.when(
+                              data: (_) =>
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Flow saved')),
+                                  ),
+                              error: (error, _) =>
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Error saving flow: $error',
+                                      ),
+                                    ),
+                                  ),
+                              loading: () {},
+                            );
+                          }
+                        },
+                  size: 24,
+                  tooltip: saveState.isLoading ? "Saving..." : "Save Flow",
+                );
               },
-              size: 24,
-              tooltip: "Save Flow",
             ),
             const SizedBox(height: 10),
             CustomIconButton(

@@ -32,6 +32,8 @@ dependencies:
     path: packages/flow_canvas
   url_launcher: ^6.3.2
   bitsdojo_window: ^0.1.6
+  equatable: ^2.0.8
+  http: ^1.6.0
 
 
 

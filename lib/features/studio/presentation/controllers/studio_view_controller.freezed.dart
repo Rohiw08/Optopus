@@ -122,12 +122,12 @@ return editor(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  empty,TResult Function( WorkspaceEntity workspace)?  dashboard,TResult Function( FlowEntity flow)?  editor,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  empty,TResult Function( String workspaceId)?  dashboard,TResult Function( String flowId)?  editor,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case StudioViewEmpty() when empty != null:
 return empty();case StudioViewDashboard() when dashboard != null:
-return dashboard(_that.workspace);case StudioViewEditor() when editor != null:
-return editor(_that.flow);case _:
+return dashboard(_that.workspaceId);case StudioViewEditor() when editor != null:
+return editor(_that.flowId);case _:
   return orElse();
 
 }
@@ -145,12 +145,12 @@ return editor(_that.flow);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  empty,required TResult Function( WorkspaceEntity workspace)  dashboard,required TResult Function( FlowEntity flow)  editor,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  empty,required TResult Function( String workspaceId)  dashboard,required TResult Function( String flowId)  editor,}) {final _that = this;
 switch (_that) {
 case StudioViewEmpty():
 return empty();case StudioViewDashboard():
-return dashboard(_that.workspace);case StudioViewEditor():
-return editor(_that.flow);}
+return dashboard(_that.workspaceId);case StudioViewEditor():
+return editor(_that.flowId);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -164,12 +164,12 @@ return editor(_that.flow);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  empty,TResult? Function( WorkspaceEntity workspace)?  dashboard,TResult? Function( FlowEntity flow)?  editor,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  empty,TResult? Function( String workspaceId)?  dashboard,TResult? Function( String flowId)?  editor,}) {final _that = this;
 switch (_that) {
 case StudioViewEmpty() when empty != null:
 return empty();case StudioViewDashboard() when dashboard != null:
-return dashboard(_that.workspace);case StudioViewEditor() when editor != null:
-return editor(_that.flow);case _:
+return dashboard(_that.workspaceId);case StudioViewEditor() when editor != null:
+return editor(_that.flowId);case _:
   return null;
 
 }
@@ -213,10 +213,10 @@ String toString() {
 
 
 class StudioViewDashboard implements StudioViewState {
-  const StudioViewDashboard(this.workspace);
+  const StudioViewDashboard(this.workspaceId);
   
 
- final  WorkspaceEntity workspace;
+ final  String workspaceId;
 
 /// Create a copy of StudioViewState
 /// with the given fields replaced by the non-null parameter values.
@@ -228,16 +228,16 @@ $StudioViewDashboardCopyWith<StudioViewDashboard> get copyWith => _$StudioViewDa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StudioViewDashboard&&(identical(other.workspace, workspace) || other.workspace == workspace));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StudioViewDashboard&&(identical(other.workspaceId, workspaceId) || other.workspaceId == workspaceId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workspace);
+int get hashCode => Object.hash(runtimeType,workspaceId);
 
 @override
 String toString() {
-  return 'StudioViewState.dashboard(workspace: $workspace)';
+  return 'StudioViewState.dashboard(workspaceId: $workspaceId)';
 }
 
 
@@ -248,7 +248,7 @@ abstract mixin class $StudioViewDashboardCopyWith<$Res> implements $StudioViewSt
   factory $StudioViewDashboardCopyWith(StudioViewDashboard value, $Res Function(StudioViewDashboard) _then) = _$StudioViewDashboardCopyWithImpl;
 @useResult
 $Res call({
- WorkspaceEntity workspace
+ String workspaceId
 });
 
 
@@ -265,10 +265,10 @@ class _$StudioViewDashboardCopyWithImpl<$Res>
 
 /// Create a copy of StudioViewState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? workspace = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? workspaceId = null,}) {
   return _then(StudioViewDashboard(
-null == workspace ? _self.workspace : workspace // ignore: cast_nullable_to_non_nullable
-as WorkspaceEntity,
+null == workspaceId ? _self.workspaceId : workspaceId // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -279,10 +279,10 @@ as WorkspaceEntity,
 
 
 class StudioViewEditor implements StudioViewState {
-  const StudioViewEditor(this.flow);
+  const StudioViewEditor(this.flowId);
   
 
- final  FlowEntity flow;
+ final  String flowId;
 
 /// Create a copy of StudioViewState
 /// with the given fields replaced by the non-null parameter values.
@@ -294,16 +294,16 @@ $StudioViewEditorCopyWith<StudioViewEditor> get copyWith => _$StudioViewEditorCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StudioViewEditor&&(identical(other.flow, flow) || other.flow == flow));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StudioViewEditor&&(identical(other.flowId, flowId) || other.flowId == flowId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,flow);
+int get hashCode => Object.hash(runtimeType,flowId);
 
 @override
 String toString() {
-  return 'StudioViewState.editor(flow: $flow)';
+  return 'StudioViewState.editor(flowId: $flowId)';
 }
 
 
@@ -314,7 +314,7 @@ abstract mixin class $StudioViewEditorCopyWith<$Res> implements $StudioViewState
   factory $StudioViewEditorCopyWith(StudioViewEditor value, $Res Function(StudioViewEditor) _then) = _$StudioViewEditorCopyWithImpl;
 @useResult
 $Res call({
- FlowEntity flow
+ String flowId
 });
 
 
@@ -331,10 +331,10 @@ class _$StudioViewEditorCopyWithImpl<$Res>
 
 /// Create a copy of StudioViewState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? flow = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? flowId = null,}) {
   return _then(StudioViewEditor(
-null == flow ? _self.flow : flow // ignore: cast_nullable_to_non_nullable
-as FlowEntity,
+null == flowId ? _self.flowId : flowId // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

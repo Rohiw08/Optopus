@@ -18,6 +18,20 @@ class FlowRemoteDataSourceImpl implements FlowRemoteDataSource {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> getFlowsByWorkspace(
+    String workspaceId,
+  ) async {
+    // We join with collections table to filter by workspace_id
+    final response = await supabaseClient
+        .from('flows')
+        .select('*, collections!inner(workspace_id)')
+        .eq('collections.workspace_id', workspaceId)
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  @override
   Future<Map<String, dynamic>> createFlow({
     required String name,
     required String collectionId,
@@ -54,5 +68,15 @@ class FlowRemoteDataSourceImpl implements FlowRemoteDataSource {
   @override
   Future<void> deleteFlow(String flowId) async {
     await supabaseClient.from('flows').delete().eq('id', flowId);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getFlowById(String flowId) async {
+    final response = await supabaseClient
+        .from('flows')
+        .select()
+        .eq('id', flowId)
+        .single();
+    return response;
   }
 }
