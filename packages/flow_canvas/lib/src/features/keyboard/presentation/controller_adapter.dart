@@ -5,7 +5,7 @@ import 'package:flow_canvas/src/core/options/flow_options.dart';
 import 'package:flow_canvas/src/features/keyboard/presentation/inputs/intent_actions.dart';
 import 'package:flow_canvas/src/features/keyboard/presentation/inputs/keymap.dart';
 
-class KeyboardAdapter extends StatelessWidget {
+class KeyboardAdapter extends StatefulWidget {
   final FlowCanvasInternalController controller;
   final FlowCanvasOptions options;
   final Keymap keymap;
@@ -20,18 +20,39 @@ class KeyboardAdapter extends StatelessWidget {
   });
 
   @override
+  State<KeyboardAdapter> createState() => _KeyboardAdapterState();
+}
+
+class _KeyboardAdapterState extends State<KeyboardAdapter> {
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final Map<LogicalKeySet, Intent> shortcuts = keymap.shortcuts;
-    final Map<Type, Action<Intent>> actions = buildActions(controller, options);
+    final Map<LogicalKeySet, Intent> shortcuts = widget.keymap.shortcuts;
+    final Map<Type, Action<Intent>> actions =
+        buildActions(widget.controller, widget.options);
 
     return Shortcuts(
       shortcuts: shortcuts,
       child: Actions(
         actions: actions,
         child: Focus(
+          focusNode: _focusNode,
           autofocus: true,
           onKeyEvent: (node, event) {
-            final kb = options.keyboardOptions;
+            final kb = widget.options.keyboardOptions;
             if (!kb.enabled) return KeyEventResult.ignored;
 
             // Find matching activator
@@ -46,15 +67,22 @@ class KeyboardAdapter extends StatelessWidget {
             final mapped = kb.shortcuts[matched];
             if (mapped == null) return KeyEventResult.ignored;
 
-            controller.keyboard.handleKeyboardAction(
+            widget.controller.keyboard.handleKeyboardAction(
               mapped,
               options: kb,
-              minZoom: options.viewportOptions.minZoom,
-              maxZoom: options.viewportOptions.maxZoom,
+              minZoom: widget.options.viewportOptions.minZoom,
+              maxZoom: widget.options.viewportOptions.maxZoom,
             );
             return KeyEventResult.handled;
           },
-          child: child,
+          child: Listener(
+            onPointerDown: (_) {
+              if (!_focusNode.hasFocus) {
+                _focusNode.requestFocus();
+              }
+            },
+            child: widget.child,
+          ),
         ),
       ),
     );

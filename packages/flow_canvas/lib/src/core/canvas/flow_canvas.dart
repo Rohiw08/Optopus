@@ -43,6 +43,10 @@ class FlowCanvas extends StatefulWidget {
   // --- UI ---
   final List<Widget> overlays;
 
+  /// Called when a draggable String item is dropped onto the canvas.
+  /// Provides the node type and the canvas-space position of the drop.
+  final void Function(String nodeType, Offset canvasOffset)? onDrop;
+
   const FlowCanvas({
     super.key,
     this.controller,
@@ -54,6 +58,7 @@ class FlowCanvas extends StatefulWidget {
     this.theme,
     this.options = const FlowCanvasOptions(),
     this.overlays = const [],
+    this.onDrop,
   });
 
   @override
@@ -151,6 +156,7 @@ class _FlowCanvasState extends State<FlowCanvas> {
           child: _FlowCanvasCore(
             overlays: widget.overlays,
             centerOnInitialLoad: widget.initialState == null,
+            onDrop: widget.onDrop,
           ),
         ),
       ),
@@ -161,10 +167,12 @@ class _FlowCanvasState extends State<FlowCanvas> {
 class _FlowCanvasCore extends ConsumerStatefulWidget {
   final List<Widget> overlays;
   final bool centerOnInitialLoad;
+  final void Function(String nodeType, Offset canvasOffset)? onDrop;
 
   const _FlowCanvasCore({
     required this.overlays,
     this.centerOnInitialLoad = true,
+    this.onDrop,
   });
 
   @override
@@ -206,15 +214,27 @@ class _FlowCanvasCoreState extends ConsumerState<_FlowCanvasCore> {
             },
           );
 
-          return Stack(
-            alignment: Alignment.center,
-            clipBehavior: Clip.none,
-            children: [
-              _InteractiveViewerWrapper(
-                backgroundOverlays: backgroundOverlays,
-              ),
-              ...foregroundOverlays,
-            ],
+          return DragTarget<String>(
+            onWillAcceptWithDetails: (details) => true,
+            onAcceptWithDetails: (details) {
+              if (widget.onDrop == null) return;
+              // Convert screen position to canvas-space coordinates
+              final canvasOffset =
+                  controller.viewport.screenToCanvasPosition(details.offset);
+              widget.onDrop!(details.data, canvasOffset);
+            },
+            builder: (context, candidateData, rejectedData) {
+              return Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
+                children: [
+                  _InteractiveViewerWrapper(
+                    backgroundOverlays: backgroundOverlays,
+                  ),
+                  ...foregroundOverlays,
+                ],
+              );
+            },
           );
         },
       ),

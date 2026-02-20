@@ -154,7 +154,7 @@ class ConnectionPainter extends CustomPainter {
     if (atStart) angle += pi;
 
     // Draw built-in marker types
-    switch (markerStyle.type) {
+    switch (markerStyle.markerType) {
       case EdgeMarkerType.arrow:
         _drawDefaultArrow(canvas, tangent.position, angle, size, paint,
             close: false);

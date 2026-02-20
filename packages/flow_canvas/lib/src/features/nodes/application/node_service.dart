@@ -24,6 +24,7 @@ class NodeService {
     if (nodes.isEmpty) return state;
 
     final newNodes = Map<String, FlowNode>.from(state.nodes);
+    final newNodeStates = Map<String, NodeRuntimeState>.from(state.nodeStates);
     var newNodeIndex = state.nodeIndex;
     var nextZ = state.maxZIndex;
 
@@ -33,10 +34,15 @@ class NodeService {
       final newNode = node.copyWith(zIndex: nextZ);
       newNodes[newNode.id] = newNode;
       newNodeIndex = newNodeIndex!.addNode(newNode);
+      // Initialize a default runtime state so nodes are interactable immediately
+      if (!newNodeStates.containsKey(newNode.id)) {
+        newNodeStates[newNode.id] = const NodeRuntimeState();
+      }
     }
 
     return state.copyWith(
       nodes: newNodes,
+      nodeStates: newNodeStates,
       nodeIndex: newNodeIndex,
       maxZIndex: nextZ,
     );

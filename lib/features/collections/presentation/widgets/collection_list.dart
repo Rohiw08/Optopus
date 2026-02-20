@@ -264,6 +264,16 @@ class _FlowListItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedFlowId = ref.watch(selectedFlowIdProvider);
     final isSelected = selectedFlowId == flow.id;
+    final renamingId = ref.watch(renamingFlowIdProvider);
+    final isRenaming = renamingId == flow.id;
+
+    if (isRenaming) {
+      return _FlowRenameInputTile(
+        key: ValueKey('rename_${flow.id}'),
+        flow: flow,
+        depth: depth,
+      );
+    }
 
     return ListTile(
       selected: isSelected,
@@ -313,7 +323,7 @@ class _FlowListItem extends ConsumerWidget {
             }
           }
         } else if (value == 'rename') {
-          // TODO: Implement Flow Rename
+          ref.read(renamingFlowIdProvider.notifier).set(flow.id);
         }
       },
       itemBuilder: (context) => [
@@ -540,6 +550,116 @@ class _FlowInputTileState extends ConsumerState<_FlowInputTile> {
         focusNode: _focusNode,
         decoration: const InputDecoration(
           hintText: 'Flow Name',
+          isDense: true,
+          contentPadding: EdgeInsets.all(8),
+          border: OutlineInputBorder(),
+        ),
+        onSubmitted: (_) => _submit(),
+      ),
+    );
+  }
+}
+
+class _FlowRenameInputTile extends ConsumerStatefulWidget {
+  final FlowEntity flow;
+  final int depth;
+
+  const _FlowRenameInputTile({
+    super.key,
+    required this.flow,
+    required this.depth,
+  });
+
+  @override
+  ConsumerState<_FlowRenameInputTile> createState() =>
+      _FlowRenameInputTileState();
+}
+
+class _FlowRenameInputTileState extends ConsumerState<_FlowRenameInputTile> {
+  late final TextEditingController _textController;
+  late final FocusNode _focusNode;
+  bool _submitted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController(text: widget.flow.name);
+    _focusNode = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (mounted) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        if (mounted) {
+          _focusNode.requestFocus();
+          _focusNode.addListener(_onFocusLost);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusLost);
+    _textController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusLost() {
+    if (!_focusNode.hasFocus && mounted && !_submitted) {
+      _submit();
+    }
+  }
+
+  void _closeInput() {
+    if (mounted) {
+      ref.read(renamingFlowIdProvider.notifier).set(null);
+    }
+  }
+
+  Future<void> _submit() async {
+    if (_submitted) return;
+    _submitted = true;
+    _focusNode.removeListener(_onFocusLost);
+
+    final value = _textController.text.trim();
+
+    if (value.isEmpty || value == widget.flow.name) {
+      _closeInput();
+      return;
+    }
+
+    try {
+      await ref
+          .read(flowListControllerProvider(widget.flow.collectionId).notifier)
+          .renameFlow(flowId: widget.flow.id, newName: value);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to rename flow: $e')));
+      }
+    } finally {
+      _closeInput();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      dense: true,
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(width: widget.depth * 12.0),
+          const Icon(Icons.account_tree, color: Colors.green, size: 20),
+        ],
+      ),
+      minLeadingWidth: 0,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      title: TextField(
+        controller: _textController,
+        focusNode: _focusNode,
+        decoration: const InputDecoration(
           isDense: true,
           contentPadding: EdgeInsets.all(8),
           border: OutlineInputBorder(),

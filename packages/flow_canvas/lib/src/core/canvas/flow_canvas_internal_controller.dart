@@ -166,6 +166,9 @@ class FlowCanvasInternalController extends Notifier<FlowCanvasState> {
       transformationController.dispose();
     });
 
+    // Compute initial edge geometries so edges render on first frame
+    edgeGeometry.updateGeometryIfNeeded(initial);
+
     return initial;
   }
 

@@ -105,7 +105,8 @@ abstract class FlowNode<T> with _$FlowNode<T> {
     int zIndex = 0,
 
     /// Map of handles (connection points) attached to this node.
-    List<FlowHandle> handles = const [],
+    /// Map of handles (connection points) attached to this node.
+    Map<String, FlowHandle> handles = const {},
 
     /// Whether this node should be hidden from view.
     bool? hidden,
@@ -131,10 +132,7 @@ abstract class FlowNode<T> with _$FlowNode<T> {
     /// Whether this node triggers an automatic expansion of its parent group.
     bool expandParent = false,
   }) {
-    final handlesMap = {
-      for (var handle in handles) handle.id: handle,
-    };
-    // Call the primary constructor with the correctly formatted map
+    // Call the primary constructor with the provided handles map
     return FlowNode(
       id: id,
       type: type,
@@ -142,7 +140,7 @@ abstract class FlowNode<T> with _$FlowNode<T> {
       size: size,
       parentId: parentId,
       data: data,
-      handles: handlesMap,
+      handles: handles,
       zIndex: zIndex,
       hidden: hidden,
       draggable: draggable,

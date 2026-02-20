@@ -5,8 +5,7 @@ import 'package:flow_canvas/flow_canvas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:optopus/core/widgets/error_screen.dart';
 import 'package:optopus/core/widgets/loading_screen.dart';
-import 'package:optopus/features/editor/presentation/widgets/nodes/color_picker_node.dart';
-import 'package:optopus/features/editor/presentation/widgets/nodes/input_node.dart';
+import 'package:optopus/features/editor/presentation/widgets/nodes/optopus_node.dart';
 import 'package:optopus/features/flows/domain/entities/flow_entity.dart';
 import 'package:optopus/features/flows/presentation/controllers/flow_providers.dart';
 import 'package:optopus/features/editor/presentation/controllers/editor_controller.dart';
@@ -35,13 +34,28 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
   @override
   void initState() {
     super.initState();
-    nodeRegistry = NodeRegistry()
-      ..register('colorPicker', (node) {
-        return ColorPickerCard(node: node, controller: widget.controller);
-      })
-      ..register('InputNode', (node) {
-        return InputNode(node: node, controller: widget.controller);
+    // Register OptopusNode for all known backend entity types
+    const knownTypes = [
+      'source',
+      'sink',
+      'warehouse',
+      'vehicle',
+      'machine',
+      'aircraft',
+      'worker',
+      'route',
+      'demand_forecast',
+    ];
+    nodeRegistry = NodeRegistry();
+    for (final type in knownTypes) {
+      nodeRegistry.register(type, (node) {
+        return OptopusNode(node: node, controller: widget.controller);
       });
+    }
+    // Keep InputNode as fallback for any unrecognised types
+    nodeRegistry.register('InputNode', (node) {
+      return OptopusNode(node: node, controller: widget.controller);
+    });
     edgeRegistry = EdgeRegistry();
 
     // Setup auto-save listener
@@ -92,27 +106,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     if (flow != null && flow.data.isNotEmpty) {
       return []; // Should return parsed nodes if possible here
     }
-    return [
-      FlowNode.create(
-        id: '1',
-        position: const Offset(400, 200),
-        size: const Size(150, 100),
-        type: 'colorPicker',
-        handles: [
-          const FlowHandle(
-            id: '1-both-1',
-            type: HandleType.source,
-            position: Offset(-75, -25),
-          ),
-          const FlowHandle(
-            id: '1-both-2',
-            type: HandleType.both,
-            position: Offset(75, -25),
-          ),
-        ],
-        data: {'label': 'My Custom Node'},
-      ),
-    ];
+    return [];
   }
 
   List<FlowEdge> _getInitialEdges(FlowEntity? flow) {
@@ -123,7 +117,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     controller.nodes.addNode(
       FlowNode.create(
         id: IdGenerator.generateNodeId(),
-        type: "ColorPicker",
+        type: "InputNode",
         position: Offset.zero,
         size: const Size(200, 200),
         data: {"label": "node"},
@@ -150,68 +144,60 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
         return Column(
           children: [
             Expanded(
-              child: DragTarget<String>(
-                onWillAcceptWithDetails: (data) => true,
-                onAcceptWithDetails: (details) {
-                  final RenderBox renderBox =
-                      context.findRenderObject() as RenderBox;
-                  final localOffset = renderBox.globalToLocal(details.offset);
-
+              child: FlowCanvas(
+                controller: widget.controller,
+                initialState: initialState,
+                nodeRegistry: nodeRegistry,
+                edgeRegistry: edgeRegistry,
+                initialNodes: initialState == null
+                    ? _getInitialNodes(flow)
+                    : null,
+                initialEdges: initialState == null
+                    ? _getInitialEdges(flow)
+                    : null,
+                onDrop: (nodeType, canvasOffset) {
+                  final initialSize = const Size(240, 200);
+                  final handles = handlesForType(nodeType, initialSize);
                   widget.controller.nodes.addNode(
                     FlowNode.create(
                       id: IdGenerator.generateNodeId(),
-                      type: details.data == 'IF'
-                          ? 'defaultNode'
-                          : 'colorPicker',
-                      position: localOffset,
-                      size: const Size(150, 100),
-                      data: {"label": details.data},
+                      type: nodeType,
+                      position: canvasOffset,
+                      size: initialSize,
+                      handles: handles,
+                      data: {'label': nodeType},
                     ),
                   );
                 },
-                builder: (context, candidateData, rejectedData) {
-                  return FlowCanvas(
-                    controller: widget.controller,
-                    initialState: initialState,
-                    nodeRegistry: nodeRegistry,
-                    edgeRegistry: edgeRegistry,
-                    initialNodes: initialState == null
-                        ? _getInitialNodes(flow)
-                        : null,
-                    initialEdges: initialState == null
-                        ? _getInitialEdges(flow)
-                        : null,
-                    options: const FlowCanvasOptions(
-                      viewportOptions: ViewportOptions(
-                        maxZoom: 3.0,
-                        minZoom: 0.3,
-                        fitViewOptions: FitViewOptions(
-                          maxZoom: 3.0,
-                          minZoom: 0.3,
-                          padding: EdgeInsets.all(1000),
-                        ),
-                      ),
-                      nodeOptions: NodeOptions(
-                        selectable: true,
-                        elevateNodesOnSelected: true,
-                      ),
+                options: const FlowCanvasOptions(
+                  viewportOptions: ViewportOptions(
+                    maxZoom: 3.0,
+                    minZoom: 0.3,
+                    fitViewOptions: FitViewOptions(
+                      maxZoom: 3.0,
+                      minZoom: 0.3,
+                      padding: EdgeInsets.all(1000),
                     ),
-                    theme: FlowCanvasTheme.system(context).copyWith(
-                      connection: FlowConnectionStyle.light().copyWith(
-                        endMarkerStyle: FlowEdgeMarkerStyle.colored(
-                          markerType: EdgeMarkerType.circle,
-                          size: const Size(20, 20),
-                          color: const Color(0xFF64B5F6),
-                        ),
-                      ),
+                  ),
+                  nodeOptions: NodeOptions(
+                    selectable: true,
+                    elevateNodesOnSelected: true,
+                  ),
+                ),
+                theme: FlowCanvasTheme.system(context).copyWith(
+                  connection: FlowConnectionStyle.light().copyWith(
+                    endMarkerStyle: FlowEdgeMarkerStyle.colored(
+                      markerType: EdgeMarkerType.arrowClosed,
+                      size: const Size(20, 20),
+                      color: const Color(0xFF64B5F6),
                     ),
-                    overlays: const [
-                      FlowBackground(),
-                      FlowMiniMap(),
-                      FlowCanvasControls(showLock: false),
-                    ],
-                  );
-                },
+                  ),
+                ),
+                overlays: const [
+                  FlowBackground(),
+                  FlowMiniMap(),
+                  FlowCanvasControls(showLock: false),
+                ],
               ),
             ),
           ],

@@ -10,6 +10,7 @@ import 'package:optopus/features/studio/presentation/widgets/navigation_rail.dar
 import 'package:optopus/features/studio/presentation/widgets/file_explorer.dart';
 import 'package:optopus/features/editor/presentation/widgets/editor_right_actions.dart';
 import 'package:optopus/features/editor/presentation/widgets/editor_node_library.dart';
+import 'package:optopus/features/editor/presentation/widgets/editor_results_panel.dart';
 import 'package:optopus/features/workspace/presentation/controllers/workspace_list_controller.dart';
 import 'package:optopus/features/workspace/domain/entities/workspace_entity.dart';
 import 'package:optopus/features/flows/presentation/controllers/flow_providers.dart';
@@ -136,6 +137,28 @@ class _ProjectStudioScreenState extends ConsumerState<ProjectStudioScreen> {
                         color: Theme.of(context).dividerColor,
                       ),
                     ),
+                  ),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final viewState = ref.watch(studioViewControllerProvider);
+                      return viewState.maybeWhen(
+                        editor: (flowId) => Consumer(
+                          builder: (context, ref, child) {
+                            final flowAsync = ref.watch(flowProvider(flowId));
+                            return flowAsync.when(
+                              data: (flow) => EditorRightPanel(
+                                controller: _controller,
+                                flowId: flow.id,
+                                flowName: flow.name,
+                              ),
+                              loading: () => const SizedBox.shrink(),
+                              error: (_, __) => const SizedBox.shrink(),
+                            );
+                          },
+                        ),
+                        orElse: () => const SizedBox.shrink(),
+                      );
+                    },
                   ),
                   Consumer(
                     builder: (context, ref, child) {

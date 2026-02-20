@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:optopus/core/widgets/navigation_tile_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// TODO: create actual links or page currently using optopus.ai as placeholder
 class RedirectsWidget extends StatelessWidget {
   const RedirectsWidget({super.key});
 
   final List<Map<String, String>> redirects = const [
-    {"What is Optopus?": "https://optopus.ai"},
-    {"How to use Optopus?": "https://optopus.ai"},
+    {"What is Optopus?": "http://localhost:8000/docs#/"},
+    {"How to use Optopus?": "http://localhost:8000/docs#/"},
   ];
 
   @override

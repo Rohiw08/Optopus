@@ -50,7 +50,7 @@ class DefaultNodeWidget extends ConsumerWidget {
     // Watch node runtime state (selected, dragging, etc.)
     final nodeRuntimeState = ref.watch(
       internalControllerProvider.select(
-        (state) => state.nodeStates[node.id]!,
+        (state) => state.nodeStates[node.id] ?? const NodeRuntimeState(),
       ),
     );
 

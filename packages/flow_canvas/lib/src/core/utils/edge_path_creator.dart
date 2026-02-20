@@ -127,42 +127,17 @@ class EdgePathCreator {
   /// This implementation matches React Flow's behavior where control points
   /// are positioned at a distance proportional to the total edge length.
   static Path _getBezierPath(Offset start, Offset end, double curvature) {
-    final path = Path();
-    path.moveTo(start.dx, start.dy);
-
-    final dx = end.dx - start.dx;
-    final dy = end.dy - start.dy;
-
-    // Calculate distance for control point offset
-    // React Flow uses a percentage of the total distance
-    final distance = sqrt(dx * dx + dy * dy);
-    final controlOffset = distance * curvature;
-
-    // Determine primary direction (more horizontal vs more vertical)
-    final absDx = dx.abs();
-    final absDy = dy.abs();
-    final isHorizontal = absDx > absDy;
-
-    late final double cp1x, cp1y, cp2x, cp2y;
-
-    if (isHorizontal) {
-      // Horizontal dominant: extend control points horizontally
-      final offset = max(controlOffset, absDx * 0.5 * curvature);
-      cp1x = start.dx + (dx > 0 ? offset : -offset);
-      cp1y = start.dy;
-      cp2x = end.dx - (dx > 0 ? offset : -offset);
-      cp2y = end.dy;
-    } else {
-      // Vertical dominant: extend control points vertically
-      final offset = max(controlOffset, absDy * 0.5 * curvature);
-      cp1x = start.dx;
-      cp1y = start.dy + (dy > 0 ? offset : -offset);
-      cp2x = end.dx;
-      cp2y = end.dy - (dy > 0 ? offset : -offset);
-    }
-
-    path.cubicTo(cp1x, cp1y, cp2x, cp2y, end.dx, end.dy);
-    return path;
+    // Default to a left-to-right flow for standard bezier paths
+    // to prevent the curve from "flipping" abruptly when nodes cross.
+    // This provides a consistent "unflippable" aesthetic similar to React Flow's
+    // directed edges.
+    return getBezierPathWithPositions(
+      source: start,
+      target: end,
+      sourcePosition: HandlePosition.right,
+      targetPosition: HandlePosition.left,
+      curvature: curvature,
+    );
   }
 
   /// Creates a step path with sharp orthogonal corners.

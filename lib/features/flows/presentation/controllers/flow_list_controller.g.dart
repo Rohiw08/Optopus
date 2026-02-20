@@ -61,6 +61,58 @@ abstract class _$SelectedFlowId extends $Notifier<String?> {
   }
 }
 
+@ProviderFor(RenamingFlowId)
+final renamingFlowIdProvider = RenamingFlowIdProvider._();
+
+final class RenamingFlowIdProvider
+    extends $NotifierProvider<RenamingFlowId, String?> {
+  RenamingFlowIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'renamingFlowIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$renamingFlowIdHash();
+
+  @$internal
+  @override
+  RenamingFlowId create() => RenamingFlowId();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$renamingFlowIdHash() => r'6e9ddf0ace6b1124514ec92826b038d875803854';
+
+abstract class _$RenamingFlowId extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(FlowListController)
 final flowListControllerProvider = FlowListControllerFamily._();
 

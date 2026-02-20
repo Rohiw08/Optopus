@@ -17,6 +17,7 @@ typedef HandleBuilder = Widget Function(
   BuildContext context,
   HandleRuntimeState state,
   FlowHandleStyle style,
+  HandleType type,
 );
 
 /// A connection point on a node widget.
@@ -71,7 +72,7 @@ class Handle extends ConsumerWidget {
     final decoration = theme.resolveDecoration(_states(handleState));
 
     final Widget handleCore = handleBuilder != null
-        ? handleBuilder!(context, handleState, theme)
+        ? handleBuilder!(context, handleState, theme, type)
         : _DefaultHandle(decoration: decoration);
 
     return FlowPositioned(

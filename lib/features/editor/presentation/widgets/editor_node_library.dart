@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:optopus/core/widgets/search_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:optopus/features/nodes/presentation/providers/node_types_provider.dart';
+import 'package:optopus/core/widgets/loading_screen.dart';
+import 'package:optopus/core/widgets/error_screen.dart';
 
-class EditorNodeLibraryDrawer extends StatelessWidget {
+class EditorNodeLibraryDrawer extends ConsumerWidget {
   const EditorNodeLibraryDrawer({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Determine width based on screen size, similar to n8n drawer
+  Widget build(BuildContext context, WidgetRef ref) {
     final double width = 400;
+
+    final nodeTypesAsync = ref.watch(nodeTypesProvider);
 
     return Drawer(
       width: width,
@@ -44,67 +49,65 @@ class EditorNodeLibraryDrawer extends StatelessWidget {
 
           // List
           Expanded(
-            child: ListView(
-              children: const [
-                NodeListTile(
-                  title: 'Webhook',
-                  description: 'Triggers the flow via HTTP request',
-                  icon: Icons.webhook,
-                  color: Colors.deepOrange,
-                ),
-                NodeListTile(
-                  title: 'HTTP Request',
-                  description: 'Make an HTTP call to an API',
-                  icon: Icons.cloud_queue,
-                  color: Colors.blueAccent,
-                ),
-                NodeListTile(
-                  title: 'Code',
-                  description: 'Execute custom JavaScript/Dart code',
-                  icon: Icons.code,
-                  color: Colors.amber,
-                ),
-                NodeListTile(
-                  title: 'IF',
-                  description: 'Split the flow based on conditions',
-                  icon: Icons.call_split,
-                  color: Colors.teal,
-                ),
-                NodeListTile(
-                  title: 'Schedule',
-                  description: 'Trigger flow at specific times',
-                  icon: Icons.schedule,
-                  color: Colors.purple,
-                ),
-                NodeListTile(
-                  title: 'Merge',
-                  description: 'Merge multiple branches into one',
-                  icon: Icons.call_merge,
-                  color: Colors.indigo,
-                ),
-                NodeListTile(
-                  title: 'Google Sheets',
-                  description: 'Read and write to Google Sheets',
-                  icon: Icons.grid_on,
-                  color: Colors.green,
-                ),
-                NodeListTile(
-                  title: 'Slack',
-                  description: 'Send messages to Slack',
-                  icon: Icons.alternate_email,
-                  color: Colors.redAccent,
-                ),
-              ],
+            child: nodeTypesAsync.when(
+              data: (nodes) {
+                if (nodes.isEmpty) {
+                  return const Center(child: Text("No nodes found"));
+                }
+
+                return ListView.builder(
+                  itemCount: nodes.length,
+                  itemBuilder: (context, index) {
+                    final node = nodes[index];
+                    return NodeListTile(
+                      title: node.type.toUpperCase(),
+                      type: node.type,
+                      description: node.description,
+                      icon: _getIconForDomain(node.domain),
+                      color: _getColorForDomain(node.domain),
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(child: LoadingScreen()),
+              error: (err, stack) => ErrorScreen(message: err.toString()),
             ),
           ),
         ],
       ),
     );
   }
+
+  IconData _getIconForDomain(String domain) {
+    switch (domain) {
+      case 'logistics':
+        return Icons.local_shipping;
+      case 'manufacturing':
+        return Icons.precision_manufacturing;
+      case 'aviation':
+        return Icons.flight;
+      default:
+        return Icons.category;
+    }
+  }
+
+  Color _getColorForDomain(String domain) {
+    switch (domain) {
+      case 'logistics':
+        return Colors.blueAccent;
+      case 'manufacturing':
+        return Colors.amber;
+      case 'aviation':
+        return Colors.lightBlue;
+      default:
+        return Colors.deepOrange;
+    }
+  }
 }
 
 class NodeListTile extends StatelessWidget {
   final String title;
+  final String type;
   final String description;
   final IconData icon;
   final Color color;
@@ -112,6 +115,7 @@ class NodeListTile extends StatelessWidget {
   const NodeListTile({
     super.key,
     required this.title,
+    required this.type,
     required this.description,
     required this.icon,
     required this.color,
@@ -120,7 +124,11 @@ class NodeListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Draggable<String>(
-      data: title,
+      data: type,
+      onDragStarted: () {
+        // Close the drawer so the user can see the canvas while dragging
+        Scaffold.of(context).closeEndDrawer();
+      },
       feedback: Material(
         color: Colors.transparent,
         child: Container(

@@ -9,13 +9,13 @@ class EditorRepositoryImpl implements EditorRepository {
   EditorRepositoryImpl(this._dataSource);
 
   @override
-  Future<Either<EditorFailure, void>> executeFlow({
+  Future<Either<EditorFailure, Map<String, dynamic>>> executeFlow({
     required String flowId,
     required Map<String, dynamic> data,
   }) async {
     try {
-      await _dataSource.executeFlow(flowId: flowId, data: data);
-      return const Right(null);
+      final result = await _dataSource.executeFlow(flowId: flowId, data: data);
+      return Right(result);
     } catch (e) {
       // TODO: Map specific exceptions to specific failures
       return Left(ExecutionFailure(e.toString()));

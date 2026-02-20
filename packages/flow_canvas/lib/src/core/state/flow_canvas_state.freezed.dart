@@ -61,9 +61,6 @@ mixin _$FlowCanvasState {
       _$FlowCanvasStateCopyWithImpl<FlowCanvasState>(
           this as FlowCanvasState, _$identity);
 
-  /// Serializes this FlowCanvasState to a JSON map.
-  Map<String, dynamic> toJson();
-
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -109,7 +106,6 @@ mixin _$FlowCanvasState {
                 other.lastClickedEdgeId == lastClickedEdgeId));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -617,7 +613,7 @@ extension FlowCanvasStatePatterns on FlowCanvasState {
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _FlowCanvasState extends FlowCanvasState {
   const _FlowCanvasState(
       {@NodeMapConverter() final Map<String, FlowNode> nodes = const {},
@@ -652,8 +648,6 @@ class _FlowCanvasState extends FlowCanvasState {
         _selectedNodes = selectedNodes,
         _selectedEdges = selectedEdges,
         super._();
-  factory _FlowCanvasState.fromJson(Map<String, dynamic> json) =>
-      _$FlowCanvasStateFromJson(json);
 
 // Core graph data
   final Map<String, FlowNode> _nodes;
@@ -781,13 +775,6 @@ class _FlowCanvasState extends FlowCanvasState {
       __$FlowCanvasStateCopyWithImpl<_FlowCanvasState>(this, _$identity);
 
   @override
-  Map<String, dynamic> toJson() {
-    return _$FlowCanvasStateToJson(
-      this,
-    );
-  }
-
-  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
@@ -832,7 +819,6 @@ class _FlowCanvasState extends FlowCanvasState {
                 other.lastClickedEdgeId == lastClickedEdgeId));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,

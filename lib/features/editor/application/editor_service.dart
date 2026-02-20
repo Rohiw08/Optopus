@@ -9,7 +9,7 @@ class EditorService {
 
   EditorService(this._editorRepository, this._flowRepository);
 
-  Future<Either<EditorFailure, void>> executeFlow({
+  Future<Either<EditorFailure, Map<String, dynamic>>> executeFlow({
     required String flowId,
     required Map<String, dynamic> data,
   }) async {

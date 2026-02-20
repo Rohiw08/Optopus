@@ -86,15 +86,22 @@ Map<Type, Action<Intent>> buildActions(
       onInvoke: (intent) {
         final state = controller.currentState;
 
-        // Nodes
+        // Pre-compute deletable nodes and edges from INITIAL state
         final defaultNodeDeletable = options.nodeOptions.deletable;
-
         final deletableNodeIds = state.selectedNodes.where((id) {
           final n = state.nodes[id];
           if (n == null) return false;
           return n.deletable ?? defaultNodeDeletable;
         }).toList();
 
+        final defaultEdgeDeletable = options.edgeOptions.deletable;
+        final deletableEdgeIds = state.selectedEdges.where((id) {
+          final e = state.edges[id];
+          if (e == null) return false;
+          return e.deletable ?? defaultEdgeDeletable;
+        }).toList();
+
+        // 1. Delete Nodes
         if (deletableNodeIds.isNotEmpty) {
           controller.selection.deselectAll();
           for (final id in deletableNodeIds) {
@@ -103,16 +110,7 @@ Map<Type, Action<Intent>> buildActions(
           controller.nodes.removeSelectedNodes();
         }
 
-        // Edges (remaining selection might have changed; recompute)
-
-        final refreshed = controller.currentState;
-        final defaultEdgeDeletable = options.edgeOptions.deletable;
-        final deletableEdgeIds = refreshed.selectedEdges.where((id) {
-          final e = refreshed.edges[id];
-          if (e == null) return false;
-          return e.deletable ?? defaultEdgeDeletable;
-        }).toList();
-
+        // 2. Delete Edges (using pre-computed list)
         if (deletableEdgeIds.isNotEmpty) {
           controller.selection.deselectAll();
           for (final id in deletableEdgeIds) {

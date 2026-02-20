@@ -53,7 +53,7 @@ final class EditorDataSourceProvider
   }
 }
 
-String _$editorDataSourceHash() => r'45ea7f2da20a753ec5451229e1332a97c755ccae';
+String _$editorDataSourceHash() => r'a7ac19c0a643bf816d46ee26be5e5a60863bdb49';
 
 @ProviderFor(editorRepository)
 final editorRepositoryProvider = EditorRepositoryProvider._();

@@ -14,6 +14,14 @@ class SelectedFlowId extends _$SelectedFlowId {
 }
 
 @riverpod
+class RenamingFlowId extends _$RenamingFlowId {
+  @override
+  String? build() => null;
+
+  void set(String? id) => state = id;
+}
+
+@riverpod
 class FlowListController extends _$FlowListController {
   @override
   Future<List<FlowEntity>> build(String collectionId) async {
